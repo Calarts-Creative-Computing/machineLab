@@ -34,11 +34,17 @@ If this does not show up in network settings (or your using some bizarre linux d
   
 Client will be sending OSC to server on port 8001 using the following addresses for each instrument
   /breakBot
+  
   /ganaPati
+  
   /tammy
+  
   /marimba
+  
   /rattleTron
-  /trimpspin
+  
+  /trimpbeat
+  
   Future instruments will follow the same naming convention
   
 The format for the clients messages will be in this format. Address, note, velocity
