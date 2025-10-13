@@ -33,6 +33,7 @@ If this does not show up in network settings (or your using some bizarre linux d
   As of now there is no password
   
 Client will be sending OSC to server on port 8001 using the following addresses for each instrument
+
   /breakBot
   
   /ganaPati
