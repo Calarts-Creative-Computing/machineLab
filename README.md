@@ -1,4 +1,4 @@
-This is new code for the Machine Lab. Created Fall 2025. This folder in within the robots folder on the mac mini. Silly git inside of a git.
+This is new code for the Machine Lab. Created Fall 2025. The placement on the Mac Mini will be updated since the git there is still my personal. This should be updated within the next few days.
 
 
 here is the documentation. still working on this and is growing
