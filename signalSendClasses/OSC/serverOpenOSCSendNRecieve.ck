@@ -107,7 +107,7 @@ while(true){
     }
 
 
-    else if(instrument == "/trimspin"){
+    else if(instrument == "/trimpbeat"){
 
         send.send(instrument, note, vel);
         // for(0 => int i; i < values.size(); i++){
