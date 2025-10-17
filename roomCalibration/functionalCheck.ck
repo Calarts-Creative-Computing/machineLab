@@ -11,6 +11,8 @@ OscIn in;
 OscOut inMonitor;
 OscMsg msg;
 
+"127.0.0.1" => string ipAddress;
+
 [45,52,57,60,64,69,76,81,88,93,96] @=> int marimbaNotes[];
 [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1] @=> float marimbaThresh[];
 
@@ -59,7 +61,7 @@ fun void saveResultsToJSON(int badPairs[][]) {
 
 // ---------------------- MarimBot ----------------------
 fun void marimBot() {
-    osc.init("127.0.0.1", 50000);
+    osc.init(ipAddress, 50000);
     int testVal;
 
     for (0 => int i; i < marimbaNotes.size(); i++) {

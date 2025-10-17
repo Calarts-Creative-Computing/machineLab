@@ -1,3 +1,4 @@
+//Written by Colton Arnold Fall 2025
 @import "../signalSendClasses/midi/midiInstrumentClass.ck";
 @import "../signalSendClasses/OSC/globalOSCSendClass.ck";
 
@@ -42,13 +43,12 @@ fun void instrumentPlay(){
     //note HMM test
     [0, 0, 1, 0, 0, 1, 1] @=> int note[];
     hmm.train( 2, 2, observations2 );
-    notesHMM[16];
+
     hmm.generate( 16, notesHMM);
 
 
     //vel HMM test
     hmm.train( 2, 2, vel );
-    int velHMM[16];
     hmm.generate(16, velHMM);
 
     // output

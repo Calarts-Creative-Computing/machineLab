@@ -1,28 +1,27 @@
-//Written by Colton Arnold Fall 2025
+// Created by Colton Arnold Fall 2025
 
+@import "../signalSendClasses/midi/midiInstrumentClass.ck";
+@import "../bpmSetClass.ck";
 @import "../signalSendClasses/OSC/globalOSCSendClass.ck";
 
-
-oscSends osc;
-// Marimba MIDI notes
-[45, 47, 48, 50, 52, 53, 54, 55, 57, 59, 
-60, 62, 64, 65, 66, 67, 69, 71, 72, 74, 
-76, 77, 78, 79, 81, 83, 84, 86, 88, 89, 
-90, 91, 93, 95, 96] @=> int mScl[];
-
 HMM hmm;
-
-float durArray[0];
-500::ms => dur beat;
+oscSends osc;
+midiInstrumentSends midiSend;
+bpmSet bpmTime;
 
 "192.168.1.145" => string ipAddress;
 8001 => int port;
 
-// Note Duration HMM
+<<<bpmTime.bpm(120)>>>;
+
+
+float durArray[0];
+bpmTime.bpm(120)::ms => dur beat;
+
 fun void noteDur() {
     32 => int length;
 
-    [0, 1, 0, 2, 1, 1, 1, 1, 2, 1, 1, 1] @=> int observations[];
+    [0,0,0,0,1,2,1,2,] @=> int observations[];
     hmm.train(2, 3, observations);
 
     int results1[length];
@@ -64,25 +63,27 @@ fun void noteDur() {
 
 }
 
-fun void marimbotSend(int note, int vel){
+// it does not need note offs, but its a good habit
+// to get used to sending them
+fun void drumbotPlay(int note, int vel, dur long){
+    drumbotSend(note, vel);   
+    long => now;
+    drumbotSend(note, 0);
+}
 
+fun void drumbotSend(int note, int vel){
     osc.init(ipAddress, port);
-    osc.send("/marimba", note, vel);
+    osc.send("/breakBot", note, vel);
 
+    
 }
 
-fun void marimbotPlay(int note, int vel, dur long){
-   marimbotSend(note, vel);
-   long => now;
-   marimbotSend(note, 0);
-}
-
-fun void marimBotOut(){
+fun void drumBotOut(){
 
     noteDur();
 
-    [10, 21, 28, 2, 32, 5, 34, 22, 15, 4] @=> int observations2[];
-    hmm.train( 2, 36, observations2 );
+    [0, 0, 1, 0, 0, 1, 1] @=> int observations2[];
+    hmm.train( 2, 2, observations2 );
     int results2[16];
     hmm.generate( 16, results2 );
 
@@ -93,7 +94,7 @@ fun void marimBotOut(){
     {
         
         //chout <= results2[i] <= " ";
-        marimbotPlay( mScl[results2[i]], 127, durArray[i] * beat);
+        drumbotPlay(results2[i], 127, durArray[i] * beat);
 
         chout <= results2[i] <= " ";
         
@@ -106,7 +107,20 @@ fun void marimBotOut(){
 }
 
 
-while(true) {
-    marimBotOut();
-    // shakeShake(1000, 20);
+// drumbot accepts 0-12
+// as of 02/10/2017 BreakBot is in the following state ...
+// 0-1 - Kick, working well
+// 2   - XXXXXX - Does Nothing
+// 3   - Snare - missing beater - nice actuator sound
+// 4   - XXXXXX - Does nothing
+// 5   - Brush on Snare - use many quick pulses to move smoothly
+// 6   - Ride Beater #1- Broken - Quiet Clicking Sound 
+// 7   - Ride Dampener #1, out of position, makes mechanical sound
+// 8   - Ride Beater #2 - Needs high velocity to actuate
+// 9   - Ride Dampener #2, out of position, makes mechanical sound
+// 10  - Crash Single Beater - Broken Stick - some mechanical sound on high velocitites
+// 11  - Crash Double Beater #1 - works well
+// 12  - Crash Double Beater #2 - works well
+while (true) {
+    drumBotOut();
 }
