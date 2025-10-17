@@ -63,7 +63,7 @@ fun void noteDur() {
 
 fun void marimbotSend(int note, int vel){
 
-    osc.init("localhost", 50000);
+    osc.init("192.168.1.145", 50000);
     osc.send("/marimba", note, vel);
 
 }
