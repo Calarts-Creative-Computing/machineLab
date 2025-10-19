@@ -110,10 +110,8 @@ while(true){
     else if(instrument == "/trimpbeat"){
 
         send.send(instrument, note, vel);
-        // for(0 => int i; i < values.size(); i++){
-        //     chout <= values[i] <= " ";
-        // }
-        // chout <= IO.newline();
+        10::ms => now;
+        send.send(instrument, note, 0);
         values.clear();
 
     }
