@@ -1,5 +1,5 @@
 OscOut out;
-("localhost", 50000) => out.dest;
+("192.168.1.145", 8001) => out.dest;
 
 // Trimpspin MIDI notes
 [60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
