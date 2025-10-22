@@ -110,10 +110,15 @@ while(true){
     else if(instrument == "/trimpbeat"){
 
         send.send(instrument, note, vel);
+<<<<<<< Updated upstream
         // for(0 => int i; i < values.size(); i++){
         //     chout <= values[i] <= " ";
         // }
         // chout <= IO.newline();
+=======
+        100::ms => now;
+        send.send(instrument, note, 0);
+>>>>>>> Stashed changes
         values.clear();
 
     }
