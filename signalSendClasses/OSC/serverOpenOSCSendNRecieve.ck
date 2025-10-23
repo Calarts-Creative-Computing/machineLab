@@ -13,7 +13,7 @@ oscSends send;
 midiInstrumentSends midiSendBreak;
 midiInstrumentSends midiSendRattle;
 midiInstrumentSends midiSendTammy;
-midiInstrumentSends midiSendGala;
+midiInstrumentSends midiSendGuna;
 
 
 string instrument;
@@ -34,7 +34,7 @@ send.init("localhost", 50000);
 midiSendBreak.init(1); // breakBot
 midiSendRattle.init(4); // rattleTron
 midiSendTammy.init(3); // tammy
-midiSendGala.init(0); // galaPati
+midiSendGala.init(0); // gunaPati
 
 
 while(true){
@@ -62,9 +62,9 @@ while(true){
 
     }
 
-    else if(instrument == "/galaPati"){
+    else if(instrument == "/gunaPati"){
 
-        midiSendGala.messageSend(note, vel, 0);
+        midiSendGuna.messageSend(note, vel, 0);
         // for(0 => int i; i < values.size(); i++){
         //     chout <= values[i] <= " ";
         // }
