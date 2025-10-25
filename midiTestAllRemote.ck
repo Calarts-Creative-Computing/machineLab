@@ -1,14 +1,11 @@
 //Written by Colton Arnold Fall 2025
-
-@import "../machineLabCode/midiInstrumentClass.ck";
-@import "../machineLabCode/bpmSetClass.ck";
-@import "../machineLabCode/globalOSCSendClass.ck";
+@import "../machineLab/signalSendClasses/OSC/globalOSCSendClass.ck";
+@import "../machineLab/templateFiles/bpmSetClass.ck";
 
 oscSends osc;
-midiInstrumentSends midiSend;
 bpmSet bpmTime;
 
-120 => int tempo;
+10 => int tempo;
 
 <<<bpmTime.bpm(tempo)>>>;
 
@@ -27,39 +24,40 @@ bpmTime.bpm(tempo)::ms => dur beat;
 [0, 1, 2, 3, 16] @=> int rattleArray[];
 
 
+osc.init("192.168.1.145", 8001);
+
 fun breakBot(){
-    midiSend.init(1);
+
     for(int i; i < 4; i++){
-        midiSend.messageSend(breakBotArray[i], 127, 1);
+        osc.send("/breakBot", breakBotArray[i], 127);
         beat => now; 
     } 
 }
 
 fun galaPati(){
-    midiSend.init(0);
-    for(int i; i < 8; i++){
-        midiSend.messageSend(galaPatiArray[i], 127, 1);
+    for(int i; i < 8; 
+    i++){
+        osc.send("/galaPati", galaPatiArray[i], 127);
         beat => now;
     } 
 } 
 
 fun tammyMyLove(){
-    midiSend.init(3);
-    for(int i; i < 10; i++){
-        midiSend.messageSend(tammyArray[i], 127, 1);
-        beat => now;
+    for(1 => int i; i > 0; i--){
+        osc.send("/tammy", tammyArray[i], 127);
+        7::second => now;
     }
 }
 
 fun rattleTron(){
-    midiSend.init(4);
     for(int i; i < 4; i++){
-        midiSend.messageSend(rattleArray[i], 127, 1);
+        osc.send("/rattletron", rattleArray[i], 127);
         beat => now;
     }
 }
+1000::ms => now;
 
-galaPati();
+//galaPati();
 //breakBot();
-//tammyMyLove();
+tammyMyLove();
 //rattleTron();

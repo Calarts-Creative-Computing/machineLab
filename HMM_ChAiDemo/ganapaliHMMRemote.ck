@@ -10,6 +10,10 @@ if( !mout.open(0) ) me.exit();
 
 MidiMsg  msg;
 
+"192.168.1.145" => string ipAddress;
+8001 => int port;
+
+
 float durArray[0];
 500::ms => dur beat;
 
@@ -69,7 +73,7 @@ fun void drumbotPlay(int note, int vel, dur long){
 fun void drumbotSend(int note, int vel){
 
     osc.init(ipAddress, port);
-    osc.send("/ganaPati", note, vel);
+    osc.send("/galaPati", note, vel);
 }
 
 fun void drumBotOut(){

@@ -8,6 +8,7 @@
 OscMsg msg;
 OscIn in;
 
+
 oscReceive receive;
 oscSends send;
 midiInstrumentSends midiSendBreak;
@@ -113,6 +114,10 @@ while(true){
         10::ms => now;
         send.send(instrument, note, 0);
         values.clear();
+
+    }
+    
+    else if(instrument == "/bpm"){
 
     }
 }
