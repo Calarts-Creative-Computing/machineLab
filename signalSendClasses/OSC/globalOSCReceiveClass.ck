@@ -57,8 +57,8 @@ public class oscReceive {
                 Std.itoa(vel) => string velString;
 
                 data << instrument;
-                data << noteString;
-                data << velString;
+                data << Std.itoa(note);
+                data << Std.itoa(vel);
                 
                 return data;
             }
