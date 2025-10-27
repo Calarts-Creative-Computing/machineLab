@@ -7,7 +7,6 @@ OscOut localSend
 //change the number of the array
 in.port(conductorReceive[0]);
 
-["/bpm"] => string address;
 
 localSend.("localhost", 7001)
 
@@ -49,12 +48,17 @@ while(true){
     
     receive() => string receivedMsg[];
 
-    Std.atoi(receivedMsg[1]) => int recievedBpm
+    for(0 => int i; i < receivedMsg.size() - 1; i++){
+        chout <= receivedMsg[i] <= " ";
+    }
+    chout <= IO.newline();
+
+
 
     while( in.recv(msg) )
     { 
         localSend.start("/fromConductor");
-        localSend.add(recievedBPM);
+        localSend.add(receivedMsg);
         localSend.send();
             
     }
