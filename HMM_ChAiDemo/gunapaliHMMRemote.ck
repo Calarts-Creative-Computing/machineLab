@@ -73,7 +73,7 @@ fun void drumbotPlay(int note, int vel, dur long){
 fun void drumbotSend(int note, int vel){
 
     osc.init(ipAddress, port);
-    osc.send("/gunaPati", note, vel);
+    osc.send("/ganapati", note, vel);
 }
 
 fun void drumBotOut(){

@@ -35,7 +35,7 @@ send.init("localhost", 50000);
 midiSendBreak.init(1); // breakBot
 midiSendRattle.init(4); // rattleTron
 midiSendTammy.init(3); // tammy
-midiSendGuna.init(0); // gunapati
+midiSendgana.init(0); // ganapati
 
 
 while(true){
@@ -63,9 +63,9 @@ while(true){
 
     }
 
-    else if(instrument == "/gunaPati"){
+    else if(instrument == "/ganapati"){
 
-        midiSendGuna.messageSend(note, vel, 0);
+        midiSendgana.messageSend(note, vel, 0);
         // for(0 => int i; i < values.size(); i++){
         //     chout <= values[i] <= " ";
         // }

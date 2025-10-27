@@ -13,12 +13,12 @@ midiInstrumentSends midiSend;
 "/rattleTron" => string rattleTron;
 "/tammy" => string tammy;
 "/breakBot" => string breakBot;
-"/gunaPati" => string gunaPati;
+"/ganapati" => string ganapati;
 
-[marimba, rattleTron, tammy, breakBot, gunapati] => string address[];
+[marimba, rattleTron, tammy, breakBot, ganapati] => string address[];
 
 
-//[[marimba[[note, vel]]], [rattleTron[[note, vel]]], [tammy[note, vel]], [breakBot[note, vel]], [gunapati[note, vel]]] => string goodLuckInst[];
+//[[marimba[[note, vel]]], [rattleTron[[note, vel]]], [tammy[note, vel]], [breakBot[note, vel]], [ganapati[note, vel]]] => string goodLuckInst[];
 
 fun void notesMakeHMM(){
 
