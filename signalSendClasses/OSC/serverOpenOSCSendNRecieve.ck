@@ -8,7 +8,6 @@
 OscMsg msg;
 OscIn in;
 
-
 oscReceive receive;
 oscSends send;
 midiInstrumentSends midiSendBreak;
@@ -35,7 +34,7 @@ send.init("localhost", 50000);
 midiSendBreak.init(1); // breakBot
 midiSendRattle.init(4); // rattleTron
 midiSendTammy.init(3); // tammy
-midiSendgana.init(0); // ganapati
+midiSendGana.init(0); // galaPati
 
 
 while(true){
@@ -63,9 +62,9 @@ while(true){
 
     }
 
-    else if(instrument == "/ganapati"){
+    else if(instrument == "/ganaPati"){
 
-        midiSendgana.messageSend(note, vel, 0);
+        midiSendGana.messageSend(note, vel, 0);
         // for(0 => int i; i < values.size(); i++){
         //     chout <= values[i] <= " ";
         // }
@@ -114,10 +113,6 @@ while(true){
         10::ms => now;
         send.send(instrument, note, 0);
         values.clear();
-
-    }
-    
-    else if(instrument == "/bpm"){
 
     }
 }
