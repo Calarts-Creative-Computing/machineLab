@@ -1,13 +1,13 @@
 @import "../machineLab/signalSendClasses/OSC/globalOSCSendClass.ck";
 OscOut out;
-//("localhost", 50000) => out.dest;
+
+oscSends send;
 
 // Trimpbeat MIDI notes
 [60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
 70, 71, 72, 73, 74, 75, 76, 77, 78, 79] @=> int tbScl[];
 
-oscSends send;
-send.init("localhost", 50000);
+send.init("192.168.1.145", 50000);
 
 fun void tbSend(int note, int vel){
     send.send("/trimpbeat", note, vel);

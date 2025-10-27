@@ -8,12 +8,13 @@
 OscMsg msg;
 OscIn in;
 
+
 oscReceive receive;
 oscSends send;
 midiInstrumentSends midiSendBreak;
 midiInstrumentSends midiSendRattle;
 midiInstrumentSends midiSendTammy;
-midiInstrumentSends midiSendGuna;
+midiInstrumentSends midiSendGala;
 
 
 string instrument;
@@ -34,7 +35,7 @@ send.init("localhost", 50000);
 midiSendBreak.init(1); // breakBot
 midiSendRattle.init(4); // rattleTron
 midiSendTammy.init(3); // tammy
-midiSendGala.init(0); // gunaPati
+midiSendGala.init(0); // galaPati
 
 
 while(true){
@@ -62,9 +63,9 @@ while(true){
 
     }
 
-    else if(instrument == "/gunaPati"){
+    else if(instrument == "/galaPati"){
 
-        midiSendGuna.messageSend(note, vel, 0);
+        midiSendGala.messageSend(note, vel, 0);
         // for(0 => int i; i < values.size(); i++){
         //     chout <= values[i] <= " ";
         // }
@@ -110,16 +111,13 @@ while(true){
     else if(instrument == "/trimpbeat"){
 
         send.send(instrument, note, vel);
-<<<<<<< Updated upstream
-        // for(0 => int i; i < values.size(); i++){
-        //     chout <= values[i] <= " ";
-        // }
-        // chout <= IO.newline();
-=======
-        100::ms => now;
+        10::ms => now;
         send.send(instrument, note, 0);
->>>>>>> Stashed changes
         values.clear();
+
+    }
+    
+    else if(instrument == "/bpm"){
 
     }
 }

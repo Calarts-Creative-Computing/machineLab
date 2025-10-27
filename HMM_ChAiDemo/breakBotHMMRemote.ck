@@ -1,21 +1,22 @@
 // Created by Colton Arnold Fall 2025
 
 @import "../signalSendClasses/midi/midiInstrumentClass.ck";
-@import "../bpmSetClass.ck";
+//@import "../bpmSetClass.ck";
 @import "../signalSendClasses/OSC/globalOSCSendClass.ck";
 
 HMM hmm;
 oscSends osc;
 midiInstrumentSends midiSend;
-bpmSet bpmTime;
+//bpmSet bpmTime;
 
+"192.168.1.145" => string ipAddress;
+8001 => int port;
 
-
-<<<bpmTime.bpm(120)>>>;
+//<<<bpmTime.bpm(120)>>>;
 
 
 float durArray[0];
-bpmTime.bpm(120)::ms => dur beat;
+500::ms => dur beat;
 
 fun void noteDur() {
     32 => int length;
@@ -71,8 +72,8 @@ fun void drumbotPlay(int note, int vel, dur long){
 }
 
 fun void drumbotSend(int note, int vel){
-    midiSend.init(1);
-    midiSend.messageSend(note,vel, 0);
+    osc.init(ipAddress, port);
+    osc.send("/breakBot", note, vel);
 
     
 }

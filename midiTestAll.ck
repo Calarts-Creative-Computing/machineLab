@@ -60,6 +60,6 @@ fun rattleTron(){
 }
 
 galaPati();
-breakBot();
-tammyMyLove();
-rattleTron();
+//breakBot();
+//tammyMyLove();
+//rattleTron();
