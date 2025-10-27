@@ -29,10 +29,10 @@ bpmTime.bpm(tempo)::ms => dur beat;
 float breakBotThreshArray[];
 int nonFunctionalBreakBot[];
 
-//notes for galapati
-[1, 2, 3, 7, 8, 10, 12, 13, 14] @=> int galaPatiArray[];
-float galaPatiThreshArray[];
-int nonFunctionalGalaPati[];
+//notes for gunapati
+[1, 2, 3, 7, 8, 10, 12, 13, 14] @=> int gunapatiArray[];
+float gunapatiThreshArray[];
+int nonFunctionalgunapati[];
 
 //notes for tammy
 [2, 3, 4, 5, 6, 7, 8, 10, 12, 13, 14] @=> int tammyArray[];
@@ -81,15 +81,15 @@ fun void breakBot() {
 }
 
 
-fun void galaPati(){
+fun void gunapati(){
 
     midiSend.init(0);
     min => now;    
     for(int i; i < 8; i++){
-        midiSend.messageSend(galaPatiArray[i], 127, 1);
+        midiSend.messageSend(gunapatiArray[i], 127, 1);
         beat => now;
 
-        volCheck.threshHoldCheck("/galaPati", galaPatiArray[i], galaPatiThreshArray[i]);
+        volCheck.threshHoldCheck("/gunaPati", gunapatiArray[i], gunapatiThreshArray[i]);
 
          if(testVal == 1){
             //...
@@ -132,7 +132,7 @@ fun void rattleTron(){
     }
 }
 while(true){
-    galaPati();
+    gunapati();
     breakBot();
     tammyMyLove();
     rattleTron();

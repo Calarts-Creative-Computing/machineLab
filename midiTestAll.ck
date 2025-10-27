@@ -17,7 +17,7 @@ bpmTime.bpm(tempo)::ms => dur beat;
 //notes for breakBot
 [0, 1, 3, 5, 11] @=> int breakBotArray[];
 
-//notes for galapati
+//notes for gunapati
 [1, 2, 3, 7, 8, 10, 12, 13, 14] @=> int gunaPatiArray[];
 
 //notes for tammy
@@ -35,7 +35,7 @@ fun breakBot(){
     } 
 }
 
-fun galaPati(){
+fun gunapati(){
     midiSend.init(0);
     for(int i; i < 8; i++){
         midiSend.messageSend(gunaPatiArray[i], 127, 1);
@@ -59,7 +59,7 @@ fun rattleTron(){
     }
 }
 
-galaPati();
+gunapati();
 //breakBot();
 //tammyMyLove();
 //rattleTron();

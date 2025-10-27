@@ -16,8 +16,8 @@ OscMsg msg;
 [45,52,57,60,64,69,76,81,88,93,96] @=> int marimbaNotes[];
 [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1] @=> float marimbaThresh[];
 
-//notes for galapati
-[1, 2, 3, 7, 8, 10, 12, 13, 14] @=> int galaPatiArray[];
+//notes for gunapati
+[1, 2, 3, 7, 8, 10, 12, 13, 14] @=> int gunapatiArray[];
 
 // Dynamic 2D array to store failing note+velocity pairs
 int loggedNotes[0][0];

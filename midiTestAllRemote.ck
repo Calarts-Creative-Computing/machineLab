@@ -14,8 +14,8 @@ bpmTime.bpm(tempo)::ms => dur beat;
 //notes for breakBot
 [0, 1, 3, 5, 11] @=> int breakBotArray[];
 
-//notes for galapati
-[1, 2, 3, 7, 8, 10, 12, 13, 14] @=> int galaPatiArray[];
+//notes for gunapati
+[1, 2, 3, 7, 8, 10, 12, 13, 14] @=> int gunapatiArray[];
 
 //notes for tammy
 [2, 3, 4, 5, 6, 7, 8, 10, 12, 13, 14] @=> int tammyArray[];
@@ -34,10 +34,10 @@ fun breakBot(){
     } 
 }
 
-fun galaPati(){
+fun gunapati(){
     for(int i; i < 8; 
     i++){
-        osc.send("/galaPati", galaPatiArray[i], 127);
+        osc.send("/gunapati", gunapatiArray[i], 127);
         beat => now;
     } 
 } 
@@ -57,7 +57,7 @@ fun rattleTron(){
 }
 1000::ms => now;
 
-//galaPati();
+//gunapati();
 //breakBot();
 tammyMyLove();
 //rattleTron();
