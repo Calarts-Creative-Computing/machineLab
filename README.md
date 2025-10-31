@@ -23,11 +23,11 @@ Tested software is below (what I use lol)
     To run in Ableton, you will need Max4Live, NOT the OSC send that is already within Ableton. This does not format the message correctly. 
     
 Client must connect to the server’s router
-Currently listed as MrRoboto
+Currently listed as Skynet:)
 If this does not show up in network settings (or your using some bizarre linux distro, i know y’all are out there), you can manually join with the following address
   192.168.1.1
     Host IP address is below:
-      192.168.1.145
+      192.168.0.15
       This should not change (in theory), but will be updated if this occurs
       
   As of now there is no password
