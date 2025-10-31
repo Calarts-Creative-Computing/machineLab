@@ -1,8 +1,8 @@
 //Written by Colton Arnold Fall 2025
 
-@import "../machineLabCode/midiInstrumentClass.ck";
-@import "../machineLabCode/bpmSetClass.ck";
-@import "../machineLabCode/globalOSCSendClass.ck";
+@import "./signalSendClasses/midi/midiInstrumentClass.ck";
+@import "./templateFiles/bpmSetClass.ck";
+@import "./signalSendClasses/OSC/globalOSCSendClass.ck";
 
 oscSends osc;
 midiInstrumentSends midiSend;
@@ -60,6 +60,6 @@ fun rattleTron(){
 }
 
 ganapati();
-//breakBot();
-//tammyMyLove();
+breakBot();
+tammyMyLove();
 //rattleTron();
