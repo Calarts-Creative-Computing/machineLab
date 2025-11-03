@@ -15,7 +15,7 @@ HMM hmm;
 float durArray[0];
 500::ms => dur beat;
 
-"192.168.1.145" => string ipAddress;
+"localhost" => string ipAddress;
 8001 => int port;
 
 // Note Duration HMM

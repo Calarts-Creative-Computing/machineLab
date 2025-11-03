@@ -1,39 +1,53 @@
 // Created by Colton Arnold Fall 2025
-public class volumeCheck{
+public class VolumeCheck {
+    
+    // ----- Audio chain -----
+    adc => Gain micGain => FFT fft =^ RMS rms => blackhole;
+    
+    // ----- Parameters -----
+    100.0 => micGain.gain;       // fixed mic gain
+    2048 => fft.size;            // FFT size
+    Windowing.hann(2048) => fft.window; // Hann window
+    0.008 => float threshold;    // noise threshold (RMS values below ignored)
 
-    // connect microphone (ADC) to blackhole so we can measure it without hearing
-    adc => Gain g => blackhole;
-
-    // set mic gain if needed (default is 1.0)
-    30.0 => g.gain;
-
-    // RMS (root-mean-square) level calculation
-    fun float getLevel() {
-        // measure across a short window
-        512 => int size;
-        float sum;
-        for (0 => int i; i < size; i++) {
-            g.last() => float sample;
-            sum + sample*sample => sum;
-            1::samp => now;
-        }
-        return Math.sqrt(sum / size);
+    // ----- Constructor -----
+    fun void init() {
+        // nothing dynamic needed; all fixed values are set above
     }
 
-    fun int threshHoldCheck(string instrument, int note, float thresh){
+    // ----- Measure RMS for a note -----
+    fun float measureAvgVolume(int note, int repeats, oscSends osc) {
+        0.0 => float total;
+        osc.init("localhost", 50000);
+        <<< "----- Measuring note", note, "-----" >>>;
 
-        if(thresh < getLevel()){
+        for (0 => int i; i < repeats; i++) {
+            osc.send("/marimba", note, 127);
+            <<< "Play note", note, "hit", i+1, "..." >>>;
 
-            <<<instrument,": ", note,  " is functioning properly">>>;
-            return 1;
+            // tiny wait so OSC message triggers
+            0.2::second => now;
+
+            // measure for a short duration after hit
+            0.5::second => dur measureDur;
+            0.0 => float maxRMS;
+            now + measureDur => time endTime;
+
+            while (now < endTime) {
+                rms.upchuck() @=> UAnaBlob blob;
+                blob.fval(0) => float level;
+
+                if (level > threshold && level > maxRMS) level => maxRMS;
+
+                fft.size()::samp => now;
+            }
+
+            <<< "Measured RMS level (peak above threshold):", maxRMS >>>;
+            total + maxRMS => total;
+
+            1::second => now; // pause before next hit
         }
 
-        else{
-
-            <<<instrument, ": ", note, " is not functioning preoperly">>>;
-            return 0;
-        }
+        return total / repeats;
     }
-
 }
-
