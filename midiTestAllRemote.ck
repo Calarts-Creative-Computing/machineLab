@@ -1,63 +1,118 @@
 //Written by Colton Arnold Fall 2025
-@import "../machineLab/signalSendClasses/OSC/globalOSCSendClass.ck";
-@import "../machineLab/templateFiles/bpmSetClass.ck";
-
-oscSends osc;
-bpmSet bpmTime;
-
-10 => int tempo;
-
-<<<bpmTime.bpm(tempo)>>>;
-
-bpmTime.bpm(tempo)::ms => dur beat;
-
-//notes for breakBot
-[0, 1, 3, 5, 11] @=> int breakBotArray[];
-
-//notes for ganapati
-[1, 2, 3, 7, 8, 10, 12, 13, 14] @=> int ganapatiArray[];
-
-//notes for tammy
-[2, 3, 4, 5, 6, 7, 8, 10, 12, 13, 14] @=> int tammyArray[];
-
-//notes for rattleTron
-[0, 1, 2, 3, 16] @=> int rattleArray[];
 
 
-osc.init("192.168.1.145", 8001);
+@import "../OSC/globalOSCReceiveClass.ck";
+@import "../OSC/globalOSCSendClass.ck";
+@import "../midi/midiInstrumentClass.ck"
 
-fun breakBot(){
+OscMsg msg;
+OscIn in;
 
-    for(int i; i < 4; i++){
-        osc.send("/breakBot", breakBotArray[i], 127);
-        beat => now; 
-    } 
-}
+oscReceive receive;
+oscSends send;
+midiInstrumentSends midiSendBreak;
+midiInstrumentSends midiSendRattle;
+midiInstrumentSends midiSendTammy;
+midiInstrumentSends midiSendGala;
 
-fun ganapati(){
-    for(int i; i < 8; 
-    i++){
-        osc.send("/ganapati", ganapatiArray[i], 127);
-        beat => now;
-    } 
-} 
 
-fun tammyMyLove(){
-    for(1 => int i; i > 0; i--){
-        osc.send("/tammy", tammyArray[i], 127);
-        7::second => now;
+string instrument;
+int note;
+int vel;
+string values[3];
+
+// [8000, 8001, 8002, 8003, 8004, 8005, 8006, 8007, 8008, 8009] @=> int clientRecievePorts[];
+
+// for(0 => int i; i < clientRecievePorts.size(); i++){
+//     receive.init(clientRecievePorts[i]);
+//     <<<"port ", clientRecievePorts[i], " open">>>;
+// }
+
+receive.init(8001);
+send.init("localhost", 50000);
+
+midiSendBreak.init(1); // breakBot
+midiSendRattle.init(4); // rattleTron
+midiSendTammy.init(3); // tammy
+midiSendGana.init(0); // galaPati
+
+
+while(true){
+
+    //1::ms => now;
+    //<<<values, "AHHHHHH">>>;
+
+    receive.receive() @=> values;
+
+    values[0] => instrument;
+    values[1] => string noteString;
+    values[2] => string velString;
+
+    Std.atoi(noteString) => note;
+    Std.atoi(velString) => vel;
+
+    
+    //<<<("instrument:", instrument, "note: ", note, "vel: ", vel)>>>;
+
+    if(instrument == "/breakBot"){
+
+        midiSendBreak.messageSend(note, vel, 0);
+        
+        values.clear();
+
+    }
+
+    else if(instrument == "/ganaPati"){
+
+        midiSendGana.messageSend(note, vel, 0);
+        // for(0 => int i; i < values.size(); i++){
+        //     chout <= values[i] <= " ";
+        // }
+        // chout <= IO.newline();
+        values.clear();
+
+    }
+    
+    else if(instrument == "/tammy"){
+
+        midiSendTammy.messageSend(note, vel, 0);
+        // for(0 => int i; i < values.size(); i++){
+        //     chout <= values[i] <= " ";
+        // }
+        // chout <= IO.newline();       
+        values.clear();
+
+    }
+
+    else if(instrument == "/rattleTron"){
+
+        midiSendRattle.messageSend(note, vel, 0);
+        // for(0 => int i; i < values.size(); i++){
+        //     chout <= values[i] <= " ";
+        // }
+        // chout <= IO.newline();
+        values.clear();
+
+    }    
+
+    else if(instrument == "/marimba"){
+
+        send.send(instrument, note, vel);
+        // for(0 => int i; i < values.size(); i++){
+        //     chout <= values[i] <= " ";
+        // }
+        // chout <= IO.newline();
+        values.clear();
+
+    }
+
+
+    else if(instrument == "/trimpbeat"){
+
+        send.send(instrument, note, vel);
+        10::ms => now;
+        send.send(instrument, note, 0);
+        values.clear();
+
     }
 }
-
-fun rattleTron(){
-    for(int i; i < 4; i++){
-        osc.send("/rattletron", rattleArray[i], 127);
-        beat => now;
-    }
-}
-1000::ms => now;
-
-//ganapati();
-//breakBot();
-tammyMyLove();
-//rattleTron();

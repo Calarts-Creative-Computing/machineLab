@@ -1,13 +1,13 @@
 [
-{ "note": 45, "average_volume": 0.09469 },
-{ "note": 52, "average_volume": 0.14040 },
-{ "note": 57, "average_volume": 0.30091 },
-{ "note": 60, "average_volume": 0.41556 },
-{ "note": 64, "average_volume": 0.30256 },
-{ "note": 69, "average_volume": 0.12493 },
-{ "note": 76, "average_volume": 0.00000 },
-{ "note": 81, "average_volume": 0.17312 },
-{ "note": 88, "average_volume": 0.02515 },
-{ "note": 93, "average_volume": 0.01225 },
-{ "note": 96, "average_volume": 0.00000 }
+{ "note": 45, "vel": 127, "average_volume": 0.09469 },
+{ "note": 52, "vel": 127, "average_volume": 0.14040 },
+{ "note": 57, "vel": 127, "average_volume": 0.30091 },
+{ "note": 60, "vel": 127, "average_volume": 0.41556 },
+{ "note": 64, "vel": 127, "average_volume": 0.30256 },
+{ "note": 69, "vel": 127, "average_volume": 0.12493 },
+{ "note": 76, "vel": 127, "average_volume": 0.00000 },
+{ "note": 81, "vel": 127, "average_volume": 0.17312 },
+{ "note": 88, "vel": 127, "average_volume": 0.02515 },
+{ "note": 93, "vel": 127, "average_volume": 0.01225 },
+{ "note": 96, "vel": 127, "average_volume": 0.00000 }
 ]

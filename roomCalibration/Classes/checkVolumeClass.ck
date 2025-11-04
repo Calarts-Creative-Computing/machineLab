@@ -16,7 +16,7 @@ public class VolumeCheck {
     }
 
     // ----- Measure RMS for a note -----
-    fun float measureAvgVolume(int note, int repeats, oscSends osc) {
+    fun float measureAvgVolume(int note, int vel, int repeats, oscSends osc) {
         0.0 => float total;
         osc.init("localhost", 50000);
         <<< "----- Measuring note", note, "-----" >>>;
