@@ -2,11 +2,15 @@
 // name: trainInstrumentModel.ck
 // desc: robust JSON parser for note, vel, avgVol + KNN trainer
 //---------------------------------------------------------------------
+@import "/Users/mtiid/git/machineLabCode/signalSendClasses/OSC/globalOSCSendClass.ck";
+@import "/Users/mtiid/git/machineLabCode/roomCalibration/Classes/checkVolumeClass.ck";
 
-"/Users/coltonarnold/Documents/GitHub/machineLab/average_mic_levels.json" => string filename;
+oscSends osc;
+volumeCheck vol;  // our class for RMS measurements
 
+1.5::second => dur waitTime;
 
-"";
+"/Users/mtiid/git/machineLab/average_mic_levels.json" => string filename;
 
 // open file
 FileIO fio;
@@ -56,7 +60,7 @@ while (fio.more()) {
 
     // extract all values from this line
     extractAfter(line, "note") $ float => float n;
-    extractAfter(line, "vel") $ float => float v;
+    extractAfter(line, "velocity") $ float => float v;
     extractAfter(line, "average_volume") => float a;
 
     // append to arrays
@@ -194,6 +198,33 @@ mlp.save( me.dir() + filenameModel );
 [0.0, 0.0] @=> float input[];
 [0.0] @=> float output[];
 
-mlp.predict([48.0, 127.0], output);
+45 => int testNote;
+127 => int testVel;
+
+mlp.predict([testNote * 1.0, testVel * 1.0], output);
+
+fun float measureAvgVolume(int note, int velocity, int repeats) { // <-- added velocity param
+    0.0 => float total;
+    osc.init("localhost", 50000);
+    <<< "----- Measuring note", note, "velocity", velocity, "-----" >>>;
+
+    for (0 => int i; i < repeats; i++) {
+        osc.send("/marimba", note, velocity); // <-- use velocity
+        <<< "Play note", note, "velocity", velocity, "hit", i+1, "..." >>>;
+
+        0.2::second => now; // small delay for OSC trigger
+
+        vol.getLevel() => float level;
+        <<< "Measured RMS level:", level >>>;
+
+        total + level => total;
+        waitTime => now;
+    }
+
+    return total / repeats;
+}
+
+        
+<<<measureAvgVolume(testNote, testVel, 1)>>>;
 
 <<<output[0]>>>;
