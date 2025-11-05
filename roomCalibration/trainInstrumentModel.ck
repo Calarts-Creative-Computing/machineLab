@@ -5,6 +5,9 @@
 
 "/Users/coltonarnold/Documents/GitHub/machineLab/average_mic_levels.json" => string filename;
 
+
+"";
+
 // open file
 FileIO fio;
 fio.open(filename, FileIO.READ);
@@ -113,7 +116,9 @@ for (int i; i < avgVols.size(); i++) {
 chout <= IO.newline();
 chout <= IO.newline();
 
-
+// float temp[2];
+// float X[notes.size()][2];
+// float Y[avgVols.size()][1];
 
 MLP mlp;
 
@@ -121,37 +126,58 @@ MLP mlp;
 mlp.init(nodes);
 
 //input
-[
-    [notes[0], vels[0]],
-    [notes[1], vels[1]],
-    [notes[2], vels[2]],
-    [notes[3], vels[3]],
-    [notes[4], vels[4]],
-    [notes[5], vels[5]],
-    [notes[6], vels[6]],
-    [notes[7], vels[7]],
-    [notes[8], vels[8]],
-    [notes[9], vels[9]],
-    [notes[10], vels[10]]
+// [
+//     [notes[0], vels[0]],
+//     [notes[1], vels[1]],
+//     [notes[2], vels[2]],
+//     [notes[3], vels[3]],
+//     [notes[4], vels[4]],
+//     [notes[5], vels[5]],
+//     [notes[6], vels[6]],
+//     [notes[7], vels[7]],
+//     [notes[8], vels[8]],
+//     [notes[9], vels[9]],
+//     [notes[10], vels[10]]
 
-] @=> float X[][];
+// ] @=> float X[][];
 
-for(0 => int i; i < )
+// for(0 => int i; i < notes.size(); i++){
+//     notes[i] => float notesTemp;
+//     vels[i] => float velsTemp;
 
-[
-    [avgVols[0]],
-    [avgVols[1]],
-    [avgVols[2]],
-    [avgVols[3]],
-    [avgVols[4]],
-    [avgVols[5]],
-    [avgVols[6]],
-    [avgVols[7]],
-    [avgVols[8]],
-    [avgVols[9]],
-    [avgVols[10]]
+//     notesTemp => temp[0];
+//     velsTemp => temp[1];
+//     X << temp;
 
-] @=> float Y[][];
+//     //temp.reset();
+// }
+// [
+//     [avgVols[0]],
+//     [avgVols[1]],
+//     [avgVols[2]],
+//     [avgVols[3]],
+//     [avgVols[4]],
+//     [avgVols[5]],
+//     [avgVols[6]],
+//     [avgVols[7]],
+//     [avgVols[8]],
+//     [avgVols[9]],
+//     [avgVols[10]]
+
+// ] @=> float Y[][];
+
+// for(0 => int i; i < avgVols.size(); i++){
+//     Y << avgVols[i];
+// }
+
+float X[notes.size()][2];
+float Y[notes.size()][1];
+
+for (int i; i < notes.size(); i++) {
+    notes[i] => X[i][0];
+    vels[i] => X[i][1];
+    avgVols[i] => Y[i][0];
+}
 
 // train
 0.05 => float lr;
@@ -168,6 +194,6 @@ mlp.save( me.dir() + filenameModel );
 [0.0, 0.0] @=> float input[];
 [0.0] @=> float output[];
 
-mlp.predict([62.0, 127.0], output);
+mlp.predict([48.0, 127.0], output);
 
 <<<output[0]>>>;

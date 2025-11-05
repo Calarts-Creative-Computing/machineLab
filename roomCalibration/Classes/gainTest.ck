@@ -6,8 +6,9 @@ oscSends osc;
 VolumeCheck vol;  // our RMS measurement class
 
 // notes (or test labels)
-[45, 52, 57, 60, 64, 69, 76, 81, 88, 93, 96] @=> int marimbaNotes[];
+[45, 52, 57, 60, 64, 69, 77, 81, 88, 93, 95] @=> int marimbaNotes[];
 [20, 60, 90, 127] @=> int vel[];
+["/marimba"] @=> string address[];
 
 // number of readings per note
 3 => int repeats;
@@ -51,15 +52,18 @@ fun void saveAveragesToJSON(float levels[], int notes[]) {
 }
 
 // ----- main test -----
-fun void test() {
-    for (0 => int i; i < marimbaNotes.size(); i++) {
-        // measure using the class method
-        for(0 => int j; j < vel.size(); j++ ){
-            vol.measureAvgVolume(marimbaNotes[i], vel[j], repeats, osc) => avgLevels[i];
-            <<< "Average mic level for note", marimbaNotes[i], ":", avgLevels[i] >>>;
-            waitTime => now; // optional extra pause between notes
+fun void test(int notes[]) {
+    for(0 => int h; h < address.size(); h++){
+        for (0 => int i; i < notes.size(); i++) {
+                // measure using the class method
+                for(0 => int j; j < vel.size(); j++ ){
+                    vol.measureAvgVolume(notes[i], vel[j], repeats, instrumentAddress, osc) => avgLevels[i];
+                    <<< "Average mic level for note", marimbaNotes[i], ":", avgLevels[i] >>>;
+                    waitTime => now; // optional extra pause between notes
+                }
         }
     }
+
 
     saveAveragesToJSON(avgLevels, marimbaNotes);
     <<< "All measurements complete." >>>;
