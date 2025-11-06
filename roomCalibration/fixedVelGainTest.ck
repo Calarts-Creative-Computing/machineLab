@@ -8,7 +8,7 @@ volumeCheck vol;  // our class for RMS measurements
 [45, 52, 57, 60, 64, 69, 77, 81, 88] @=> int marimbaNotes[];
 
 // velocities to test
-[ 90, 127] @=> int vel[]; // <-- added velocity array
+[90, 127] @=> int vel[]; // <-- added velocity array
 
 // number of readings per note
 3 => int repeats;

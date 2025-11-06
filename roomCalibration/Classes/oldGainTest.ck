@@ -75,6 +75,7 @@ fun void test() {
         <<< "Average mic level for note", marimbaNotes[i], ":", avgLevels[i] >>>;
     }
 
+    
     saveAveragesToJSON(avgLevels, marimbaNotes);
     <<< "All measurements complete." >>>;
 }
