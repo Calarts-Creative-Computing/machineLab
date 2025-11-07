@@ -8,6 +8,7 @@ Machine.add(me.dir()+"/BreakBot.ck");
 //Machine.add(me.dir()+"/JackBass.ck");
 //Machine.add(me.dir()+"/JackPerc.ck");
 
+Machine.add(me.dir()+"/Modulettes.ck");
 Machine.add(me.dir()+"/Tammy.ck");
 Machine.add(me.dir() + "/RattleTron.ck");
 
