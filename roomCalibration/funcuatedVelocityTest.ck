@@ -4,7 +4,7 @@
 // Save every reading + actual per-hit velocity + averages to JSON
 // ---------------------------------------------------------
 
-@import "/Users/mtiid/git/machineLabCode/signalSendClasses/OSC/globalOSCSendClass.ck";
+@import "/Users/mtiid/git/machineLab/signalSendClasses/OSC";
 @import "/Users/mtiid/git/machineLab/roomCalibration/Classes/checkVolumeClassTest.ck";
 
 oscSends osc;
@@ -32,9 +32,7 @@ int allHitVelocities[marimbaNotes.size()][baseVel.size()][repeats];
 // Function: measureVolumes()
 // Measures several RMS levels for a given note
 // Randomizes velocity for each hit
-fun void measureVolumes(int note, int baseVelocity, int repeats,
-                        float levels[], int hitVelocities[]) 
-                        {
+fun void measureVolumes(int note, int baseVelocity, int repeats, float levels[], int hitVelocities[]){
 
     osc.init("localhost", 50000);
     <<< "----- Measuring note", note, "base velocity", baseVelocity, "-----" >>>;
@@ -68,6 +66,36 @@ fun void measureVolumes(int note, int baseVelocity, int repeats,
         level => levels[i];
         waitTime => now;
     }
+
+        for (0 => int i; i < 3; i++) {
+        int v;
+
+        // choose range based on base velocity
+        if (baseVelocity == 90) {
+            baseVelocity => v;
+        } else if (baseVelocity == 127) {
+            baseVelocity => v;
+        }
+
+        // clamp to MIDI range
+        if (v < 1) 1 => v;
+        if (v > 127) 127 => v;
+
+        // store per-hit velocity
+        v => hitVelocities[i];
+
+        // send note
+        osc.send("/marimba", note, v);
+        <<< "Play note", note, "velocity", v, "hit", i+1, "..." >>>;
+
+        // measure RMS
+        0.2::second => now;
+        vol.getLevel() => float level;
+        <<< "Measured RMS level:", level >>>;
+
+        level => levels[i];
+        waitTime => now;
+    }
 }
 
 
@@ -75,13 +103,7 @@ fun void measureVolumes(int note, int baseVelocity, int repeats,
 // Function: saveLevelsToJSON()
 // Saves all levels + velocities + averages to JSON
 // ---------------------------------------------------------
-fun void saveLevelsToJSON(
-    float allLevels[][][],
-    int allHitVelocities[][][],
-    int notes[],
-    int baseVelocities[],
-    int repeats
-) {
+fun void saveLevelsToJSON(float allLevels[][][], int allHitVelocities[][][], int notes[], int baseVelocities[], int repeats) {
     FileIO file;
     "mic_levels_per_hit.json" => string filename;
     file.open(filename, FileIO.WRITE);
@@ -134,7 +156,7 @@ fun void saveLevelsToJSON(
 // ---------------------------------------------------------
 // Main Test
 // ---------------------------------------------------------
-fun void test() {
+fun void test(){
     for (0 => int i; i < marimbaNotes.size(); i++) {
         for (0 => int j; j < baseVel.size(); j++) {
             // temp arrays for one test group
