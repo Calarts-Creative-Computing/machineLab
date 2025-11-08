@@ -4,8 +4,8 @@
 // Save every reading + actual per-hit velocity + averages to JSON
 // ---------------------------------------------------------
 
-@import "/Users/mtiid/git/machineLab/signalSendClasses/OSC";
-@import "/Users/mtiid/git/machineLab/roomCalibration/Classes/checkVolumeClassTest.ck";
+@import "../signalSendClasses/OSC/globalOSCSendClass.ck";
+@import "./Classes/checkVolumeClass.ck";
 
 oscSends osc;
 volumeCheck vol;  // class for RMS measurements
@@ -34,7 +34,7 @@ int allHitVelocities[marimbaNotes.size()][baseVel.size()][repeats];
 // Randomizes velocity for each hit
 fun void measureVolumes(int note, int baseVelocity, int repeats, float levels[], int hitVelocities[]){
 
-    osc.init("localhost", 50000);
+    osc.init("192.168.0.15", 8001);
     <<< "----- Measuring note", note, "base velocity", baseVelocity, "-----" >>>;
 
     for (0 => int i; i < repeats; i++) {
@@ -158,6 +158,7 @@ fun void saveLevelsToJSON(float allLevels[][][], int allHitVelocities[][][], int
 // ---------------------------------------------------------
 fun void test(){
     for (0 => int i; i < marimbaNotes.size(); i++) {
+        1::second => now;
         for (0 => int j; j < baseVel.size(); j++) {
             // temp arrays for one test group
             float tempLevels[repeats];

@@ -10,7 +10,7 @@ public class volumeCheck{
     // RMS (root-mean-square) level calculation
     fun float getLevel() {
         // measure across a short window
-        512 => int size;
+        1024 => int size;
         float sum;
         for (0 => int i; i < size; i++) {
             g.last() => float sample;
