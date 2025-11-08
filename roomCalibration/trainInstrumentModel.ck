@@ -50,26 +50,19 @@ fun float extractAfter(string src, string key) {
         return Std.atoi(sub);
 }
 
-// --- parse file ---
+// --- parse per-hit JSON ---
 string line;
-float currentNote;
-float currentBaseVel;
 
 while (fio.more()) {
     fio.readLine() => line;
 
-    // when we encounter a note line
-    if (line.find("\"note\"") >= 0 && line.find("\"hits\"") >= 0) {
-        extractAfter(line, "note") $ float => currentNote;
-        extractAfter(line, "base_velocity") $ float => currentBaseVel;
-    }
-
-    // each hit line looks like: { "velocity": X, "level": Y }
-    if (line.find("\"velocity\"") >= 0 && line.find("\"level\"") >= 0) {
+    // Each entry is a single-line JSON object
+    if (line.find("\"note\"") >= 0 && line.find("\"velocity\"") >= 0) {
+        extractAfter(line, "note") => float n;
         extractAfter(line, "velocity") => float v;
         extractAfter(line, "level") => float l;
-        // append one data point
-        notes << currentNote;
+
+        notes << n;
         vels << v;
         levels << l;
     }
@@ -77,7 +70,6 @@ while (fio.more()) {
 
 fio.close();
 
-<<< "✅ Parsed per-hit entries:", notes.size(), "data points" >>>;
 
 // ---------------------------------------------------------
 // STEP 2: Prepare training data
@@ -91,16 +83,11 @@ for (int i; i < notes.size(); i++) {
     levels[i] => Y[i][0];
 }
 
-// Print a few samples for sanity
-for (int i; i < Math.min(5, notes.size()); i++) {
-    <<< "Sample", i, ": note", X[i][0], "vel", X[i][1], "level", Y[i][0] >>>;
-}
-
 // ---------------------------------------------------------
 // STEP 3: Train MLP
 // ---------------------------------------------------------
 MLP mlp;
-[2, 5, 5, 1] @=> int nodes[];
+[2, 8, 8, 1] @=> int nodes[];
 mlp.init(nodes);
 
 0.05 => float lr;

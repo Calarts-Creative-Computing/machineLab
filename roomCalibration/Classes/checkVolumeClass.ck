@@ -1,15 +1,11 @@
 // Created by Colton Arnold Fall 2025
-public class volumeCheck{
-
-    // connect microphone (ADC) to blackhole so we can measure it without hearing
+public class volumeCheck {
     adc => Gain g => blackhole;
 
-    // set mic gain if needed (default is 1.0)
+    // use unity gain for calibration
     30.0 => g.gain;
 
-    // RMS (root-mean-square) level calculation
     fun float getLevel() {
-        // measure across a short window
         1024 => int size;
         float sum;
         for (0 => int i; i < size; i++) {
@@ -20,20 +16,15 @@ public class volumeCheck{
         return Math.sqrt(sum / size);
     }
 
-    fun int threshHoldCheck(string instrument, int note, float thresh){
-
-        if(thresh < getLevel()){
-
-            <<<instrument,": ", note,  " is functioning properly">>>;
+    fun int threshHoldCheck(string instrument, int note, float thresh) {
+        if (thresh < getLevel()) {
+            <<< instrument, ": ", note, "is functioning properly" >>>;
             return 1;
-        }
-
-        else{
-
-            <<<instrument, ": ", note, " is not functioning preoperly">>>;
+        } else {
+            <<< instrument, ": ", note, "is not functioning properly" >>>;
             return 0;
         }
     }
-
 }
+
 
