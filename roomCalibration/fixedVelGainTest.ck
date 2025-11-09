@@ -17,10 +17,10 @@ volumeCheck vol;  // our class for RMS measurements
 1.5::second => dur waitTime;
 
 // store average levels
-float avgLevels[marimbaNotes.size()][vel.size()]; // <-- now 2D array for note + velocity
+float avgLevels[marimbaNotes.size()][vel.size()]; //  now 2D array for note + velocity
 
-// ----- measure RMS for a note -----
-fun float measureAvgVolume(int note, int velocity, int repeats) { // <-- added velocity param
+// measure RMS for a note 
+fun float measureAvgVolume(int note, int velocity, int repeats) { // added velocity param
     0.0 => float total;
     osc.init("localhost", 50000);
     <<< "----- Measuring note", note, "velocity", velocity, "-----" >>>;
@@ -41,8 +41,7 @@ fun float measureAvgVolume(int note, int velocity, int repeats) { // <-- added v
     return total / repeats;
 }
 
-// ----- Save averages to JSON -----
-// ----- Save averages to JSON -----
+// Save averages to JSON
 fun void saveAveragesToJSON(float levels[][], int notes[], int velocities[]) {
     FileIO file;
     "average_mic_levels.json" => string filename;
@@ -79,7 +78,7 @@ fun void saveAveragesToJSON(float levels[][], int notes[], int velocities[]) {
 }
 
 
-// ----- main test -----
+// main test 
 fun void test() {
     for (0 => int i; i < marimbaNotes.size(); i++) {
         for (0 => int j; j < vel.size(); j++) {
@@ -89,7 +88,7 @@ fun void test() {
         }
     }
 
-    saveAveragesToJSON(avgLevels, marimbaNotes, vel); // <-- pass velocities
+    saveAveragesToJSON(avgLevels, marimbaNotes, vel); //pass velocities
     <<< "All measurements complete." >>>;
 }
 

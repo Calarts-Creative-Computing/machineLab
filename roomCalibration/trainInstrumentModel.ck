@@ -1,13 +1,12 @@
-// ---------------------------------------------------------
+
 // Train MLP using per-hit velocities from JSON
 // Each hit = (note, velocity) → measured RMS level
-// ---------------------------------------------------------
 
 @import "/Users/mtiid/git/machineLabCode/signalSendClasses/OSC/globalOSCSendClass.ck";
 @import "/Users/mtiid/git/machineLab/roomCalibration/Classes/checkVolumeClassTest.ck";
 
 oscSends osc;
-volumeCheck vol;
+VolumeCheck vol;
 
 1.5::second => dur waitTime;
 
@@ -78,8 +77,8 @@ float X[notes.size()][2];
 float Y[notes.size()][1];
 
 for (int i; i < notes.size(); i++) {
-    notes[i] => X[i][0];
-    vels[i] => X[i][1];
+    notes[i] / 127 => X[i][0];
+    vels[i] / 127 => X[i][1];
     levels[i] => Y[i][0];
 }
 

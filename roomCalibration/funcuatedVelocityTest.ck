@@ -8,7 +8,7 @@
 @import "./Classes/checkVolumeClass.ck";
 
 oscSends osc;
-volumeCheck vol;  // class for RMS measurements
+VolumeCheck vol;  // class for RMS measurements
 
 // Notes to test
 [45, 52, 57, 60, 66, 71, 83, 88, 90] @=> int marimbaNotes[];    
@@ -29,11 +29,9 @@ float allLevels[marimbaNotes.size()][baseVel.size()][repeats];
 // Store actual randomized velocities per hit
 int allHitVelocities[marimbaNotes.size()][baseVel.size()][repeats];
 
-// ---------------------------------------------------------
-// Function: measureVolumes()
+
 // Measures several RMS levels for a given note
 // Randomizes velocity for each hit
-// ---------------------------------------------------------
 fun void measureVolumes(int note, int baseVelocity, int repeats,
                         float levels[], int hitVelocities[]) {
     osc.init("localhost", 50000);

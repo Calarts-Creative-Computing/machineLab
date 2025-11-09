@@ -62,7 +62,7 @@ fun void saveResultsToJSON(int badPairs[][]) {
     <<< "Saved non-functional notes+velocities to", filename >>>;
 }
 
-// ---------------------- MarimBot ----------------------
+//MarimBot
 fun void marimBot() {
     osc.init(ipAddress, 50000);
     int testVal;
