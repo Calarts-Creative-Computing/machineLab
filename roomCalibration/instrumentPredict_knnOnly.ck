@@ -10,9 +10,8 @@ VolumeCheck vol;
 KNN knn;
 1.5::second => dur waitTime;
 
-// ---------------------------------------------------------
+
 // STEP 1: Read JSON with per-hit data
-// ---------------------------------------------------------
 "/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
 
 
@@ -73,9 +72,8 @@ while (fio.more()) {
 fio.close();
 
 
-// ---------------------------------------------------------
+
 // STEP 2: Build features and train KNN
-// ---------------------------------------------------------
 float features[notes.size()][2];
 for (int i; i < notes.size(); i++) {
     notes[i] / 127.0 => features[i][0];
@@ -89,9 +87,9 @@ for (int i; i < notes.size(); i++) {
 knn.train(features);
 <<< "✅ KNN trained with", features.size(), "samples" >>>;
 
-// ---------------------------------------------------------
+
 // STEP 3: Predict (KNN regression-style by averaging neighbors' levels)
-// ---------------------------------------------------------
+
 45 => int testNote;
 100 => int testVel;
 
