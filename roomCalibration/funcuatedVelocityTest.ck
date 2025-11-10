@@ -1,8 +1,8 @@
-// ---------------------------------------------------------
 // Measure RMS levels for multiple marimba notes
+
 // Each hit uses a different randomized velocity
+
 // Save every reading + actual per-hit velocity to JSON
-// ---------------------------------------------------------
 
 @import "../signalSendClasses/OSC/globalOSCSendClass.ck";
 @import "./Classes/checkVolumeClass.ck";
@@ -11,7 +11,7 @@ oscSends osc;
 VolumeCheck vol;  // class for RMS measurements
 
 // Notes to test
-[45, 52, 57, 60, 66, 71, 83, 88, 90] @=> int marimbaNotes[];    
+[45, 52, 57, 60, 66, 71, 77, 83, 88, 90] @=> int marimbaNotes[];    
 //[ 53] @=> int marimbaNotes[];
 
 // Base velocities (around which we randomize)
