@@ -3,8 +3,8 @@
 // Updated version with correct scaling and RMS measurement integration
 // Colton Arnold - Fall 2025
 
-@import "/Users/mtiid/git/machineLabCode/signalSendClasses/OSC/globalOSCSendClass.ck";
-@import "/Users/mtiid/git/machineLab/roomCalibration/Classes/checkVolumeClassTest.ck";
+@import "../signalSendClasses/OSC/globalOSCSendClass.ck";
+@import "./Classes/checkVolumeClass.ck";
 
 oscSends osc;
 VolumeCheck vol;
@@ -14,7 +14,7 @@ VolumeCheck vol;
 // ---------------------------------------------------------
 // STEP 1: Read JSON with per-hit data
 // ---------------------------------------------------------
-"/Users/mtiid/git/machineLab/mic_levels_per_hit.json" => string filename;
+"/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
 
 FileIO fio;
 fio.open(filename, FileIO.READ);
@@ -62,9 +62,7 @@ while (fio.more()) {
 }
 fio.close();
 
-// ---------------------------------------------------------
 // STEP 2: Prepare training data
-// ---------------------------------------------------------
 float X[notes.size()][2];
 float Y[notes.size()][1];
 
@@ -76,9 +74,7 @@ for (int i; i < notes.size(); i++) {
     levels[i] * 1000.0 => Y[i][0];
 }
 
-// ---------------------------------------------------------
 // STEP 3: Train MLP
-// ---------------------------------------------------------
 MLP mlp;
 [2, 8, 8, 1] @=> int nodes[];
 mlp.init(nodes);
@@ -95,9 +91,7 @@ mlp.save(me.dir() + filenameModel);
 
 <<< "Trained & saved model to:", filenameModel >>>;
 
-// ---------------------------------------------------------
 // STEP 4: Test model + optional real measurement
-// ---------------------------------------------------------
 64 => int testNote;
 Math.random2(60, 127) => int testVel;  // random test velocity
 
@@ -114,12 +108,10 @@ mlp.predict(inVec, output);
 output[0] / 1000.0 => float predictedRMS;
 <<< "Predicted RMS for note", testNote, "vel", testVel, "=>", predictedRMS >>>;
 
-// ---------------------------------------------------------
 // STEP 5: Live measurement using new VolumeCheck class
-// ---------------------------------------------------------
 fun float measureAvgVolume(int note, int velocity, int repeats) {
     0.0 => float total;
-    osc.init("localhost", 50000);
+    osc.init("192.168.0.15", 8001);
 
     <<< "----- Measuring note", note, "velocity", velocity, "-----" >>>;
 
