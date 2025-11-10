@@ -32,11 +32,15 @@ int allHitVelocities[marimbaNotes.size()][baseVel.size()][repeats];
 
 // Measures several RMS levels for a given note
 // Randomizes velocity for each hit
-fun void measureVolumes(int note, int baseVelocity, int repeats,
-                        float levels[], int hitVelocities[]) {
+fun void measureVolumes(int note, int baseVelocity, int repeats, float levels[], int hitVelocities[]) {
     osc.init("localhost", 50000);
+
+    // initialize OSC
     <<< "----- Measuring note", note, "base velocity", baseVelocity, "-----" >>>;
 
+    // create volume measurement object
+
+    // loop for each hit
     for (0 => int i; i < repeats; i++) {
         int v;
 
@@ -56,20 +60,23 @@ fun void measureVolumes(int note, int baseVelocity, int repeats,
         // Store per-hit velocity
         v => hitVelocities[i];
 
-        // Send note
-        osc.send("/marimba", note, v);
+        // Send note to external OSC receiver
+        osc.send("/marimba", note, v); // <-- use velocity
         <<< "Play note", note, "velocity", v, "hit", i+1, "..." >>>;
 
-        // Measure RMS
-        0.2::second => now;
-        vol.getLevel() => float level;
+        // --- Measure RMS for this note ---
+        vol.start();               // begin RMS capture
+        0.3::second => now;        // allow sound to play and measure
+        vol.stop() => float level; // stop and get max RMS
         <<< "Measured RMS level:", level >>>;
 
         level => levels[i];
-        waitTime => now;
+
+        // wait before next note (define waitTime earlier if you use it)
+        1.5::second => now;
     }
 
-    // Optional: Repeat with exact base velocity (if needed)
+    // --- Optional exact base velocity tests ---
     for (0 => int i; i < 3; i++) {
         int v;
         baseVelocity => v;
@@ -81,12 +88,14 @@ fun void measureVolumes(int note, int baseVelocity, int repeats,
         osc.send("/marimba", note, v);
         <<< "Play note", note, "velocity", v, "hit", i+1, "..." >>>;
 
-        0.2::second => now;
-        vol.getLevel() => float level;
+        // measure again
+        vol.start();
+        0.3::second => now;
+        vol.stop() => float level;
         <<< "Measured RMS level:", level >>>;
 
         level => levels[i];
-        waitTime => now;
+        1.5::second => now;
     }
 }
 
@@ -162,5 +171,5 @@ fun void test() {
 // ---------------------------------------------------------
 // Run the test
 // ---------------------------------------------------------
-1::minute => now;
+0.1::minute => now;
 test();
