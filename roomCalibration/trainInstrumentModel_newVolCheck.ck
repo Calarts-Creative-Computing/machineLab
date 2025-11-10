@@ -11,9 +11,9 @@ VolumeCheck vol;
 
 1.5::second => dur waitTime;
 
-// ---------------------------------------------------------
+
 // STEP 1: Read JSON with per-hit data
-// ---------------------------------------------------------
+
 "/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
 
 FileIO fio;

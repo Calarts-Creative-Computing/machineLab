@@ -194,14 +194,19 @@ realVol - finalPrediction => float recordedOff;
 
 if(recordedOff > marginOfError){
 
-    <<<"Move mallet closer to surface">>>;
+    <<<testnote, " Move mallet closer to surface">>>;
 
 }
 
 else if(recordedOff < marginOfError){
 
-    <<<"Move mallet further from surface">>>;
+    <<<testNote, " Move mallet further from surface">>>;
 
+}
+
+else{
+
+    <<<"No adjustments needed">>>;
 }
 
 
