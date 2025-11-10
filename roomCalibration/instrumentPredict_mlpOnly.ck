@@ -3,6 +3,21 @@
 // Includes live RMS measurement from VolumeCheck
 // Colton Arnold - Fall 2025
 
+
+// Explaining MLP training script:
+
+// Parse training data
+// Notes, velocity, levels
+// Build features matrix  & normalize (input data / 127)
+// Features[i][0]
+// Features[i][1]
+// Pushing 2D features array into KNN class
+// Normalize testNote and testVel and put into vector
+// initalize length of output array
+// run prediction
+// print normalize to RMS units
+// print recorded volumes
+
 @import "../signalSendClasses/OSC/globalOSCSendClass.ck";
 @import "./Classes/checkVolumeClass.ck";
 

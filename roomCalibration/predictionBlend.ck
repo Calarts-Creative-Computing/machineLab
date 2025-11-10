@@ -1,17 +1,18 @@
-@import "/Users/mtiid/git/machineLabCode/signalSendClasses/OSC/globalOSCSendClass.ck";
-@import "/Users/mtiid/git/machineLab/roomCalibration/Classes/checkVolumeClassTest.ck";
+@import "../signalSendClasses/OSC/globalOSCSendClass.ck";
+@import "./Classes/checkVolumeClass.ck";
 
 oscSends osc;
 VolumeCheck vol;
 MLP mlp;
-KNN2 knn;
+KNN knn;
 
 1.5::second => dur waitTime;
 
-// ---------------------------------------------------------
-// STEP 1: Read JSON with per-hit data
-// ---------------------------------------------------------
-"/Users/mtiid/git/machineLab/mic_levels_per_hit.json" => string filename;
+
+// STEP 1: Read JSON with per-hit data"/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
+
+"/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
+
 
 FileIO fio;
 fio.open(filename, FileIO.READ);
@@ -69,6 +70,14 @@ fio.close();
 
 
 
+45 => int testNote;
+100 => int testVel;
+
+fun float mlpPredict(){
+
+
+}
+
 //load MLP training
 "marimbaModelMLP_20251109.txt" => string filenameModel;
 mlp.load(me.dir() + filenameModel);
@@ -76,41 +85,123 @@ mlp.load(me.dir() + filenameModel);
 <<< "Trained & saved model to:", filenameModel >>>;
 
 
-//KNN training 
+fun float knnPredict(){
 
-// Build features = [note, velocity], labels = RMS levels
-float features[notes.size()][2];
-float labels[notes.size()];
+    float features[notes.size()][2];
+    for (int i; i < notes.size(); i++) {
+        notes[i] / 127.0 => features[i][0];
+        vels[i]  / 127.0 => features[i][1];
+    }
 
-for (int i; i < notes.size(); i++) {
-    notes[i] / 127.0 => features[i][0];
-    vels[i] / 127.0 => features[i][1];
-    levels[i] => labels[i];
+    // print feature matrix dims for debugging
+    <<< "Feature count:", features.size(), "Dim count:", features[0].size() >>>;
+
+    // Train the KNN
+    knn.train(features);
+    <<< "✅ KNN trained with", features.size(), "samples" >>>;
+
+
+    // STEP 3: Predict (KNN regression-style by averaging neighbors' levels)
+
+    float query[2];
+    testNote / 127.0 => query[0];
+    testVel  / 127.0 => query[1];
+
+    <<< "Query:", query[0], query[1], "Query length:", query.size() >>>;
+
+    // choose k, but clamp to dataset size
+    3 => int k;
+    if (k > features.size()) {
+        features.size() => k;
+    }
+
+
+
+    int neighborIndices[0];  // let KNN resize it
+    <<< "Calling knn.search (k =", k, ")..." >>>;
+    knn.search(query, k, neighborIndices);
+    <<< "Returned neighborIndices size:", neighborIndices.size() >>>;
+
+    // defensive check: make sure indices are valid
+    for (int i; i < neighborIndices.size(); i++) {
+        neighborIndices[i] => int idx;
+        if (idx < 0 || idx >= levels.size()) {
+            cherr <= "Invalid neighbor index:" <= idx <= IO.newline();
+            me.exit();
+        }
+    }
+
+    // Average their RMS levels
+    0.0 => float avgLevel;
+    for (int i; i < neighborIndices.size(); i++) {
+        levels[neighborIndices[i]] => float neighborLevel;
+        avgLevel + neighborLevel => avgLevel;
+    }
+    avgLevel / neighborIndices.size() => float predictedLevel;
+
+    <<< "Predicted RMS for note", testNote, "vel", testVel, "=>", predictedLevel >>>;
+
+   
+    return predictedLevel;
 }
 
-// Train = store all samples
-knn.train(features, labels);
-<<< "Trained KNN with", notes.size(), "samples." >>>;
+knnPredict() => float knnPrediction;
+
+mlpPredict() => float mlpPrediction;
+
+fun float measureAvgVolume(int note, int velocity, int repeats, string type) {
+    0.0 => float total;
+    osc.init("192.168.0.15", 8001);
+
+    <<< "----- Measuring note", note, "velocity", velocity, "-----" >>>;
+
+    for (0 => int i; i < repeats; i++) {
+        osc.send("/marimba", note, velocity);
+
+        // start new RMS window
+        vol.start();
+        0.3::second => now; // listen window
+        vol.stop() => float level; // max RMS over that window
+
+        <<< "Measured RMS level for: " + type + level >>>;
+
+        total + level => total;
+        waitTime => now;
+    }
+
+    return total / repeats;
+}
+
+measureAvgVolume(testNote, testVel) => float realVol
+
+0.0 => float a;
+
+(a * mlpPrediction) + ((1 - a) * mlpPrediction) => float finalPrediction;
+
+realVol - finalPrediction => float recordedOff;
+
+<<<"final prediction:  " finalPrediction>>>;
+
+<<< "Measured RMS (real): ", realVol >>>;
+
+<<<"Offset: ", recordedOff>>>;
 
 
+//adjust to solinoid... I think. might be the opposite we will test
 
-//Predictions
+0.001 => float marginOfError;
 
-55 => int testNote;
-Math.random2(60, 127) => int testVel; // random test velocity
 
-// Build input feature (normalized like training)
-float query[2];
-testNote / 127.0 => query[0];
-testVel / 127.0 => query[1];
+if(recordedOff > marginOfError){
 
-// Predict with k = 5 nearest neighbors
-float neighborVals[0];
-knn.predict(query, 5, neighborVals);
+    <<<"Move mallet closer to surface">>>;
 
-// Compute mean of neighbors' stored levels
-float sum;
-for (0 => int i; i < neighborVals.size(); i++) sum += neighborVals[i];
-(sum / neighborVals.size()) => float predictedLevel;
+}
 
-<<< "Predicted RMS for note", testNote, "vel", testVel, "=>", predictedLevel >>>;
+else if(recordedOff < marginOfError){
+
+    <<<"Move mallet further from surface">>>;
+
+}
+
+

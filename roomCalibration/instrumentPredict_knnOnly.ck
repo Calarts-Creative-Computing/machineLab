@@ -1,5 +1,21 @@
+// Explaining KNN training script:
 
-// Train MLP using per-hit velocities from JSON
+// Parse training data
+// Notes, velocity, levels
+// Build features matrix  & normalize (input data / 127)
+// Features[i][0]
+// Features[i][1]
+// Pushing 2D features array into KNN class
+// Normalize testNote and testVel: query
+// Initialize k
+// Number of neighbors picked
+// Search for k
+// Show neighbors that are displayed in neighbor index
+// get average of k neighbors
+// print average volumne
+// print recorded volume3
+
+
 // Each hit = (note, velocity) → measured RMS level
 
 @import "../signalSendClasses/OSC/globalOSCSendClass.ck";
@@ -12,7 +28,6 @@ KNN knn;
 
 
 // STEP 1: Read JSON with per-hit data
-"/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
 
 
 
@@ -132,9 +147,9 @@ avgLevel / neighborIndices.size() => float predictedLevel;
 <<< "Predicted RMS for note", testNote, "vel", testVel, "=>", predictedLevel >>>;
 
 
-// ---------------------------------------------------------
+
 // Optional live measurement comparison
-// ---------------------------------------------------------
+
 fun float measureAvgVolume(int note, int velocity, int repeats) {
     0.0 => float total;
     osc.init("192.168.0.15", 8001);
@@ -159,3 +174,6 @@ fun float measureAvgVolume(int note, int velocity, int repeats) {
 }
 
 <<< "Measured RMS (real):", measureAvgVolume(testNote, testVel, 1) >>>;
+
+
+
