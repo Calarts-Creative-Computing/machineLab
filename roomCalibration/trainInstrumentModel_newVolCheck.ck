@@ -12,7 +12,7 @@ VolumeCheck vol;
 1.5::second => dur waitTime;
 
 
-// STEP 1: Read JSON with per-hit data
+//Read JSON with per-hit data
 
 "/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
 
@@ -62,7 +62,7 @@ while (fio.more()) {
 }
 fio.close();
 
-// STEP 2: Prepare training data
+//Prepare training data
 float X[notes.size()][2];
 float Y[notes.size()][1];
 
@@ -74,7 +74,7 @@ for (int i; i < notes.size(); i++) {
     levels[i] * 1000.0 => Y[i][0];
 }
 
-// STEP 3: Train MLP
+//Train MLP
 MLP mlp;
 [2, 8, 8, 1] @=> int nodes[];
 mlp.init(nodes);
@@ -91,7 +91,7 @@ mlp.save(me.dir() + filenameModel);
 
 <<< "Trained & saved model to:", filenameModel >>>;
 
-// STEP 4: Test model + optional real measurement
+//Test model + optional real measurement
 64 => int testNote;
 Math.random2(60, 127) => int testVel;  // random test velocity
 
@@ -108,7 +108,7 @@ mlp.predict(inVec, output);
 output[0] / 1000.0 => float predictedRMS;
 <<< "Predicted RMS for note", testNote, "vel", testVel, "=>", predictedRMS >>>;
 
-// STEP 5: Live measurement using new VolumeCheck class
+//Live measurement using new VolumeCheck class
 fun float measureAvgVolume(int note, int velocity, int repeats) {
     0.0 => float total;
     osc.init("192.168.0.15", 8001);

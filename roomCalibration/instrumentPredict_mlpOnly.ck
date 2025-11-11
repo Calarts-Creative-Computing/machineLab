@@ -26,7 +26,7 @@ VolumeCheck vol;
 1.5::second => dur waitTime;
 
 
-// STEP 1: Load pre-trained MLP
+// Load pre-trained MLP
 
 MLP mlp;
 [2, 8, 8, 1] @=> int nodes[];      // must match training architecture
@@ -54,7 +54,7 @@ output[0] / 1000.0 => float predictedRMS;
 
 <<< "Predicted RMS for note", testNote, "vel", testVel, "=>", predictedRMS >>>;
 
-// STEP 3: Optional live RMS measurement
+//live RMS measurement
 fun float measureAvgVolume(int note, int velocity, int repeats) {
     0.0 => float total;
     osc.init("192.168.0.15", 8001);  // update to your OSC receiver

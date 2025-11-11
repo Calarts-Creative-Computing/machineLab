@@ -81,7 +81,7 @@ fio.close();
 100 => int testVel;
 
 fun float mlpPredict(){
-    // STEP 1: Load pre-trained MLP
+    //Load pre-trained MLP
 
     [2, 8, 8, 1] @=> int nodes[];      // must match training architecture
     mlp.init(nodes);
@@ -201,7 +201,7 @@ fun float measureAvgVolume(int note, int velocity, int repeats) {
 
 measureAvgVolume(testNote, testVel, 1) => float realVol;
 
-0.5 => float a;
+0.0 => float a;
 
 
 // Output closeness for each dataset note

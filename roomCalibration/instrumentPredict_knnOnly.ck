@@ -27,10 +27,7 @@ KNN knn;
 1.5::second => dur waitTime;
 
 
-// STEP 1: Read JSON with per-hit data
-
-
-
+//Read JSON with per-hit data
 
 FileIO fio;
 fio.open(filename, FileIO.READ);
@@ -44,7 +41,7 @@ float notes[0];
 float vels[0];
 float levels[0];
 
-// --- helper to extract between key markers ---
+//helper to extract between key markers
 fun float extractAfter(string src, string key) {
     int idx;
     src.find(key) => idx;
@@ -66,7 +63,7 @@ fun float extractAfter(string src, string key) {
         return Std.atoi(sub);
 }
 
-// --- parse per-hit JSON ---
+//  parse per-hit JSON
 string line;
 
 while (fio.more()) {
@@ -88,7 +85,7 @@ fio.close();
 
 
 
-// STEP 2: Build features and train KNN
+//Build features and train KNN
 float features[notes.size()][2];
 for (int i; i < notes.size(); i++) {
     notes[i] / 127.0 => features[i][0];
@@ -100,7 +97,7 @@ for (int i; i < notes.size(); i++) {
 
 // Train the KNN
 knn.train(features);
-<<< "✅ KNN trained with", features.size(), "samples" >>>;
+<<< "KNN trained with", features.size(), "samples" >>>;
 
 
 // STEP 3: Predict (KNN regression-style by averaging neighbors' levels)
