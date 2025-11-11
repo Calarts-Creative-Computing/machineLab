@@ -19,7 +19,7 @@ KNN knn;
 100 => int testVel;
 
 
-// STEP 1: Read JSON with per-hit data"/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
+// Read JSON with per-hit data"/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
 
 "/Users/mtiid/git/machineLab/roomCalibration/mic_levels_per_hit.json" => string filename;
 
@@ -36,7 +36,7 @@ float notes[0];
 float vels[0];
 float levels[0];
 
-// --- helper to extract between key markers ---
+//  helper to extract between key markers 
 fun float extractAfter(string src, string key) {
     int idx;
     src.find(key) => idx;
@@ -123,7 +123,7 @@ fun float knnPredict(int testNote){
     <<< " KNN trained with", features.size(), "samples" >>>;
 
 
-    // STEP 3: Predict (KNN regression-style by averaging neighbors' levels)
+    // Predict (KNN regression-style by averaging neighbors' levels)
 
     float query[2];
     testNote / 127.0 => query[0];
@@ -194,10 +194,10 @@ fun float measureAvgVolume(int note, int velocity, int repeats) {
 
 // get prediction from both models
 
-// --- Compute sine-shaped alpha between dataset notes ---
+// Compute sine-shaped alpha between dataset notes
 // Returns 0.0 if testNote matches a dataset note
 // Returns 1.0 halfway between two dataset notes
-// --- Compute inverted sine-shaped alpha between dataset notes ---
+//  Compute inverted sine-shaped alpha between dataset notes 
 // Returns 1.0 if testNote matches a dataset note
 // Returns 0.0 halfway between two dataset notes
 fun float getAlpha(int testNote, int datasetNotes[])

@@ -99,10 +99,9 @@ fun void measureVolumes(int note, int baseVelocity, int repeats, float levels[],
     }
 }
 
-// ---------------------------------------------------------
+
 // Function: saveLevelsToJSON()
 // Saves all hits (note, velocity, level) individually to JSON
-// ---------------------------------------------------------
 fun void saveLevelsToJSON(
     float allLevels[][][],
     int allHitVelocities[][][],
@@ -144,9 +143,9 @@ fun void saveLevelsToJSON(
     <<< "Saved all individual mic levels to", filename >>>;
 }
 
-// ---------------------------------------------------------
+
 // Main Test
-// ---------------------------------------------------------
+
 fun void test() {
     for (0 => int i; i < marimbaNotes.size(); i++) {
         //1::minute => now; // Allow time between note groups
@@ -168,8 +167,8 @@ fun void test() {
     <<< "All measurements complete." >>>;
 }
 
-// ---------------------------------------------------------
+
 // Run the test
-// ---------------------------------------------------------
+
 0.1::minute => now;
 test();

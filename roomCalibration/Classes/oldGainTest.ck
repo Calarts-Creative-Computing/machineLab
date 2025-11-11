@@ -40,7 +40,7 @@ fun float measureAvgVolume(int note, int repeats) {
     return total / repeats;
 }
 
-// ----- Save averages to JSON -----
+//Save averages to JSON
 fun void saveAveragesToJSON(float levels[], int notes[]) {
     FileIO file;
     "average_mic_levels.json" => string filename;
@@ -68,7 +68,7 @@ fun void saveAveragesToJSON(float levels[], int notes[]) {
     <<< "Saved average mic levels to", filename >>>;
 }
 
-// ----- main test -----
+// main test
 fun void test() {
     for (0 => int i; i < marimbaNotes.size(); i++) {
         measureAvgVolume(marimbaNotes[i], repeats) => avgLevels[i];

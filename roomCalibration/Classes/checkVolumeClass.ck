@@ -1,29 +1,29 @@
 public class VolumeCheck {
-    // --- signal chain ---
+    // signal chain
     adc => FFT fft =^ RMS rms => blackhole;
 
-    // --- parameters ---
+    // parameters
     1024 => fft.size;
     Windowing.hann(1024) => fft.window;
 
-    // --- internal state ---
+    // internal state
     0.0 => float maxRMS;
     false => int measuring;
 
-    // --- start measuring ---
+    // start measuring
     fun void start() {
         true => measuring;
         0.0 => maxRMS;
         spork ~ measureLoop();
     }
 
-    // --- stop measuring and return max RMS ---
+    // stop measuring and return max RMS
     fun float stop() {
         false => measuring;
         return maxRMS;
     }
 
-    // --- main measurement loop ---
+    // main measurement loop
     fun void measureLoop() {
         while (measuring) {
             rms.upchuck() @=> UAnaBlob blob;
