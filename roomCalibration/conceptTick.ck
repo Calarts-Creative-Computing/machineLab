@@ -1,6 +1,6 @@
 //Conceptual Tick System
 
-// --- SETTINGS ---
+//SETTINGS
 1::second / 20 => dur TICK_RATE; // 20 ticks per second
 8000 => int IN_PORT;
 50000 => int OUT_PORT;
@@ -11,7 +11,7 @@
 // temporary message buffer
 OscMsg msgQueue[0];
 
-// --- GLOBAL EVENT ---
+//GLOBAL EVENT
 Event tickEvent;
 OscRecv recv;
 IN_PORT => recv.port;
@@ -76,14 +76,14 @@ fun void sender() {
     }
 }
 
-// --- TICKER SHRED ---
+//TICKER SHRED
 spork ~ ticker();
 
 
-// --- MESSAGE HANDLER SHRED ---
+// MESSAGE HANDLER SHRED
 spork ~ handleIncoming();
 
-// --- TICK SENDER SHRED ---
+// TICK SENDER SHRED
 spork ~ sender();
 
  
