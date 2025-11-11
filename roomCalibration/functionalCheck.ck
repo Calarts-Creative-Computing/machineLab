@@ -27,7 +27,7 @@ int loggedNotes[0][0];
 500::ms => dur beat;
 3 => int repeats;
 
-// ---------------------- JSON save function ----------------------
+// JSON save function
 fun void saveResultsToJSON(int badPairs[][]) {
     FileIO file;
     "nonfunctional_marimba.json" => string filename;
@@ -107,6 +107,6 @@ fun void marimBot() {
     <<< "Non-functional notes+velocities:", loggedNotes >>>;
 }
 
-// ---------------------- Run ----------------------
+//Run 
 marimBot();
 saveResultsToJSON(loggedNotes);

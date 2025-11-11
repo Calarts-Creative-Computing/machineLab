@@ -65,7 +65,7 @@ fun void saveAveragesToJSON(float levels[][], int notes[], int velocities[]) {
 
             // comma unless last entry
             if (!(i == notes.size() - 1 && j == velocities.size() - 1))
-                entry + "," => entry;   // ✅ fixed ChucK syntax here
+                entry + "," => entry;   //fixed ChucK syntax here
 
             entry + "\n" => entry;
             file.write(entry);
