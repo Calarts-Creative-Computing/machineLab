@@ -12,14 +12,16 @@ KNN knn;
 [45, 52, 57, 60, 66, 71, 77, 83, 88, 90] @=> int marimbaDatasetNotes[];
 
 
-[55] @=> int marimbaTestNotes[];
+[45, 47, 48, 50, 52, 53, 54, 55, 57, 59, 60, 62, 64, 66, 67, 69, 71] @=> int marimbaTestNotes[];
 
-
+//create test note and vel
+48 => int testNote;
+100 => int testVel;
 
 
 // STEP 1: Read JSON with per-hit data"/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
 
-"./mic_levels_per_hit.json" => string filename;
+"/Users/mtiid/git/machineLab/roomCalibration/mic_levels_per_hit.json" => string filename;
 
 
 FileIO fio;
@@ -76,20 +78,17 @@ while (fio.more()) {
 
 fio.close();
 
-//create test note and vel
-62 => int testNote;
-100 => int testVel;
+//Load pre-trained MLP
 
-fun float mlpPredict(){
-    //Load pre-trained MLP
+[2, 8, 8, 1] @=> int nodes[];      // must match training architecture
+mlp.init(nodes);
 
-    [2, 8, 8, 1] @=> int nodes[];      // must match training architecture
-    mlp.init(nodes);
+"/Users/mtiid/git/machineLab/roomCalibration/model_hitVelocities.txt" => string filenameModel;
+mlp.load(filenameModel);
 
-    "/Users/coltonarnold/Documents/GitHub/machineLab/roomCalibration/model_hitVelocities.txt" => string filenameModel;
-    mlp.load(filenameModel);
+<<< "MLP loaded and initialized from:", filenameModel >>>;
 
-    <<< "MLP loaded and initialized from:", filenameModel >>>;
+fun float mlpPredict(int testNote){
 
 
     float inVec[2];
@@ -108,7 +107,7 @@ fun float mlpPredict(){
     return predictedRMS;
 }
 
-fun float knnPredict(){
+fun float knnPredict(int testNote){
 
     float features[notes.size()][2];
     for (int i; i < notes.size(); i++) {
@@ -168,15 +167,10 @@ fun float knnPredict(){
     return predictedLevel;
 }
 
-// get prediction from both models
-knnPredict() => float knnPrediction;
-
-mlpPredict() => float mlpPrediction;
-
 fun float measureAvgVolume(int note, int velocity, int repeats) {
 
     0.0 => float total;
-    osc.init("192.168.0.15", 8001);
+    osc.init("localhost", 8001);
 
     <<< "----- Measuring note", note, "velocity", velocity, "-----" >>>;
 
@@ -197,62 +191,118 @@ fun float measureAvgVolume(int note, int velocity, int repeats) {
     return total / repeats;
 }
 
-measureAvgVolume(testNote, testVel, 1) => float realVol;
 
-0.9 => float a;
+// get prediction from both models
 
-
-//Output closeness for each dataset note
-for (0 => int i; i < marimbaDatasetNotes.size(); i++) {
-    999 => float minDist; // track nearest test note distance
-
-    // Find nearest test note
-    for (0 => int j; j < marimbaTestNotes.size(); j++) {
-        Math.abs(marimbaDatasetNotes[i] - marimbaTestNotes[j]) => float dist;
-        if (dist < minDist){
-            dist => minDist;
-        } 
+// --- Compute sine-shaped alpha between dataset notes ---
+// Returns 0.0 if testNote matches a dataset note
+// Returns 1.0 halfway between two dataset notes
+// --- Compute inverted sine-shaped alpha between dataset notes ---
+// Returns 1.0 if testNote matches a dataset note
+// Returns 0.0 halfway between two dataset notes
+fun float getAlpha(int testNote, int datasetNotes[])
+{
+    // if exactly in dataset → max closeness
+    for (0 => int i; i < datasetNotes.size(); i++)
+    {
+        if (testNote == datasetNotes[i])
+            return 1.0;
     }
 
-    // Map distance to closeness [1.0 → 0.0]
-    // adjust the divisor to control curve steepness
-    Math.exp(-0.3 * minDist) => a;
+    // handle below and above range
+    if (testNote <= datasetNotes[0]) return 0.0;
+    if (testNote >= datasetNotes[datasetNotes.size() - 1]) return 0.0;
 
-    <<< "Note:", marimbaDatasetNotes[i], "Closeness:", a >>>;
+    // find lower and upper notes surrounding testNote
+    int lower;
+    int upper;
+    for (0 => int i; i < datasetNotes.size() - 1; i++)
+    {
+        if (testNote > datasetNotes[i] && testNote < datasetNotes[i + 1])
+        {
+            datasetNotes[i]     => lower;
+            datasetNotes[i + 1] => upper;
+            break;
+        }
+    }
+
+    // normalize position between lower and upper → [0.0 .. 1.0]
+    (testNote - lower) $ float / (upper - lower) $ float => float t;
+
+    // inverted sine curve (1 - sin(pi * t))
+    1.0 - Math.sin(Math.PI * t) => float a;
+
+    return a;
 }
 
+// open JSON file before loop
+FileIO fout;
+fout.open("/Users/mtiid/git/machineLab/roomCalibration/marimba_results.json", FileIO.WRITE);
 
-(a * mlpPrediction) + ((1 - a) * knnPrediction) => float finalPrediction;
+if (!fout.good()) {
+    cherr <= "Error: could not open marimba_results.json" <= IO.newline();
+    me.exit();
+}
+fout <= "[\n";
 
+// main loop
+for (0 => int i; i < marimbaTestNotes.size(); i++) {
+    0.004 => float marginOfError; // acceptable RMS error margin
+    marimbaTestNotes[i] => int testNote;
 
-realVol - finalPrediction => float recordedOff;
+    knnPredict(testNote) => float knnPrediction;
+    mlpPredict(testNote) => float mlpPrediction;
+    measureAvgVolume(testNote, testVel, 3) => float realVol;
 
-<<<"final prediction:  ",  finalPrediction>>>;
+    getAlpha(testNote, marimbaDatasetNotes) => float a;
+    (a * mlpPrediction) + ((1 - a) * knnPrediction) => float finalPrediction;
+    realVol - finalPrediction => float recordedOff;
 
-<<< "Measured RMS (real): ", realVol >>>;
+    realVol + marginOfError => float maximum;
+    realVol - marginOfError => float minimum;
 
-<<<"Offset: ", recordedOff>>>;
+    string adjustment;
+    if (Math.fabs(recordedOff) <= marginOfError){
+        "No adjustments needed" => adjustment;
+        <<<testNote, " No adjustments needed">>>;
+    }
 
+    else if (recordedOff > marginOfError){
+        "Move mallet closer to surface: Too Loud" => adjustment;
+        <<<testNote, "Move mallet closer to surface: Too Loud">>>;
+    }
 
-//adjust to solinoid... I think. might be the opposite we will test
+    else{
+        "Move mallet further from surface: Too soft" => adjustment;
+        <<<testNote, " Move mallet further from surface: Too soft">>>;
+    }
 
-0.001 => float marginOfError;
+    <<< "Note:", testNote, "Alpha:", a, "MLP:", mlpPrediction,
+        "KNN:", knnPrediction, "Final:", finalPrediction,
+        "Real:", realVol, "Offset:", recordedOff, adjustment >>>;
 
-
-if(recordedOff > marginOfError){
-
-    <<<testNote, " Move mallet closer to surface">>>;
-
+    // Write to JSON
+    fout <= "  {\n";
+    fout <= "    \"note\": " <= testNote <= ",\n";
+    fout <= "    \"alpha\": " <= a <= ",\n";
+    fout <= "    \"mlp_prediction\": " <= mlpPrediction <= ",\n";
+    fout <= "    \"knn_prediction\": " <= knnPrediction <= ",\n";
+    fout <= "    \"final_prediction\": " <= finalPrediction <= ",\n";
+    fout <= "    \"real_volume\": " <= realVol <= ",\n";
+    fout <= "    \"offset\": " <= recordedOff <= ",\n";
+    fout <= "    \"margin_min\": " <= minimum <= ",\n";
+    fout <= "    \"margin_max\": " <= maximum <= ",\n";
+    fout <= "    \"adjustment\": \"" <= adjustment <= "\"\n";
+    fout <= "  }";
+    if (i < marimbaTestNotes.size() - 1)
+        fout <= ",\n";
+    else
+        fout <= "\n";
 }
 
-else if(recordedOff < marginOfError){
+// close JSON array
+fout <= "]\n";
+fout.close();
 
-    <<<testNote, " Move mallet further from surface">>>;
-
-}
-
-else{
-
-    <<<"No adjustments needed">>>;
-}
-
+<<< "Results saved to marimba_results.json" >>>;
+<<< "test complete." >>>;
