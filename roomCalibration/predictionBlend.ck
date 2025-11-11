@@ -58,7 +58,7 @@ fun float extractAfter(string src, string key) {
         return Std.atoi(sub);
 }
 
-// --- parse per-hit JSON ---
+// parse per-hit JSON
 string line;
 
 while (fio.more()) {
