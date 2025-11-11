@@ -19,7 +19,7 @@ KNN knn;
 
 // STEP 1: Read JSON with per-hit data"/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
 
-"/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
+"./mic_levels_per_hit.json" => string filename;
 
 
 FileIO fio;
@@ -77,7 +77,7 @@ while (fio.more()) {
 fio.close();
 
 //create test note and vel
-55 => int testNote;
+62 => int testNote;
 100 => int testVel;
 
 fun float mlpPredict(){
@@ -91,9 +91,6 @@ fun float mlpPredict(){
 
     <<< "MLP loaded and initialized from:", filenameModel >>>;
 
-    // STEP 2: Prepare input vector
-    45 => int testNote;
-    100 => int testVel;
 
     float inVec[2];
     testNote / 127.0 => inVec[0];     // normalize note
@@ -124,7 +121,7 @@ fun float knnPredict(){
 
     // Train the KNN
     knn.train(features);
-    <<< "✅ KNN trained with", features.size(), "samples" >>>;
+    <<< " KNN trained with", features.size(), "samples" >>>;
 
 
     // STEP 3: Predict (KNN regression-style by averaging neighbors' levels)
@@ -177,6 +174,7 @@ knnPredict() => float knnPrediction;
 mlpPredict() => float mlpPrediction;
 
 fun float measureAvgVolume(int note, int velocity, int repeats) {
+
     0.0 => float total;
     osc.init("192.168.0.15", 8001);
 
@@ -201,27 +199,27 @@ fun float measureAvgVolume(int note, int velocity, int repeats) {
 
 measureAvgVolume(testNote, testVel, 1) => float realVol;
 
-0.0 => float a;
+0.9 => float a;
 
 
-// Output closeness for each dataset note
-// for (0 => int i; i < marimbaDatasetNotes.size(); i++) {
-//     999 => float minDist; // track nearest test note distance
+//Output closeness for each dataset note
+for (0 => int i; i < marimbaDatasetNotes.size(); i++) {
+    999 => float minDist; // track nearest test note distance
 
-//     // Find nearest test note
-//     for (0 => int j; j < marimbaTestNotes.size(); j++) {
-//         Math.abs(marimbaDatasetNotes[i] - marimbaTestNotes[j]) => float dist;
-//         if (dist < minDist){
-//             dist => minDist;
-//         } 
-//     }
+    // Find nearest test note
+    for (0 => int j; j < marimbaTestNotes.size(); j++) {
+        Math.abs(marimbaDatasetNotes[i] - marimbaTestNotes[j]) => float dist;
+        if (dist < minDist){
+            dist => minDist;
+        } 
+    }
 
-//     // Map distance to closeness [1.0 → 0.0]
-//     // adjust the divisor to control curve steepness
-//     Math.exp(-0.3 * minDist) => a;
+    // Map distance to closeness [1.0 → 0.0]
+    // adjust the divisor to control curve steepness
+    Math.exp(-0.3 * minDist) => a;
 
-//     <<< "Note:", marimbaDatasetNotes[i], "Closeness:", a >>>;
-// }
+    <<< "Note:", marimbaDatasetNotes[i], "Closeness:", a >>>;
+}
 
 
 (a * mlpPrediction) + ((1 - a) * knnPrediction) => float finalPrediction;
