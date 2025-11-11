@@ -9,6 +9,14 @@ KNN knn;
 1.5::second => dur waitTime;
 
 
+[45, 52, 57, 60, 66, 71, 77, 83, 88, 90] @=> int marimbaDatasetNotes[];
+
+
+[55] @=> int marimbaTestNotes[];
+
+
+
+
 // STEP 1: Read JSON with per-hit data"/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
 
 "/Users/coltonarnold/Documents/GitHub/machineLab/mic_levels_per_hit.json" => string filename;
@@ -68,22 +76,40 @@ while (fio.more()) {
 
 fio.close();
 
-
-
-45 => int testNote;
+//create test note and vel
+55 => int testNote;
 100 => int testVel;
 
 fun float mlpPredict(){
+    // STEP 1: Load pre-trained MLP
 
+    [2, 8, 8, 1] @=> int nodes[];      // must match training architecture
+    mlp.init(nodes);
 
+    "/Users/coltonarnold/Documents/GitHub/machineLab/roomCalibration/model_hitVelocities.txt" => string filenameModel;
+    mlp.load(filenameModel);
+
+    <<< "MLP loaded and initialized from:", filenameModel >>>;
+
+    // STEP 2: Prepare input vector
+    45 => int testNote;
+    100 => int testVel;
+
+    float inVec[2];
+    testNote / 127.0 => inVec[0];     // normalize note
+    testVel / 127.0 => inVec[1];      // normalize velocity
+
+    // output array must have 1 element
+    float output[1];
+    mlp.predict(inVec, output);
+
+    // rescale output back to original RMS units
+    output[0] / 1000.0 => float predictedRMS;
+
+    <<<"here is MLP prediction: ", predictedRMS>>>;
+
+    return predictedRMS;
 }
-
-//load MLP training
-"marimbaModelMLP_20251109.txt" => string filenameModel;
-mlp.load(me.dir() + filenameModel);
-
-<<< "Trained & saved model to:", filenameModel >>>;
-
 
 fun float knnPredict(){
 
@@ -145,11 +171,12 @@ fun float knnPredict(){
     return predictedLevel;
 }
 
+// get prediction from both models
 knnPredict() => float knnPrediction;
 
 mlpPredict() => float mlpPrediction;
 
-fun float measureAvgVolume(int note, int velocity, int repeats, string type) {
+fun float measureAvgVolume(int note, int velocity, int repeats) {
     0.0 => float total;
     osc.init("192.168.0.15", 8001);
 
@@ -163,7 +190,7 @@ fun float measureAvgVolume(int note, int velocity, int repeats, string type) {
         0.3::second => now; // listen window
         vol.stop() => float level; // max RMS over that window
 
-        <<< "Measured RMS level for: " + type + level >>>;
+        <<< "Measured RMS level for: "  + level >>>;
 
         total + level => total;
         waitTime => now;
@@ -172,15 +199,37 @@ fun float measureAvgVolume(int note, int velocity, int repeats, string type) {
     return total / repeats;
 }
 
-measureAvgVolume(testNote, testVel) => float realVol
+measureAvgVolume(testNote, testVel, 1) => float realVol;
 
-0.0 => float a;
+0.5 => float a;
 
-(a * mlpPrediction) + ((1 - a) * mlpPrediction) => float finalPrediction;
+
+// Output closeness for each dataset note
+// for (0 => int i; i < marimbaDatasetNotes.size(); i++) {
+//     999 => float minDist; // track nearest test note distance
+
+//     // Find nearest test note
+//     for (0 => int j; j < marimbaTestNotes.size(); j++) {
+//         Math.abs(marimbaDatasetNotes[i] - marimbaTestNotes[j]) => float dist;
+//         if (dist < minDist){
+//             dist => minDist;
+//         } 
+//     }
+
+//     // Map distance to closeness [1.0 → 0.0]
+//     // adjust the divisor to control curve steepness
+//     Math.exp(-0.3 * minDist) => a;
+
+//     <<< "Note:", marimbaDatasetNotes[i], "Closeness:", a >>>;
+// }
+
+
+(a * mlpPrediction) + ((1 - a) * knnPrediction) => float finalPrediction;
+
 
 realVol - finalPrediction => float recordedOff;
 
-<<<"final prediction:  " finalPrediction>>>;
+<<<"final prediction:  ",  finalPrediction>>>;
 
 <<< "Measured RMS (real): ", realVol >>>;
 
@@ -194,7 +243,7 @@ realVol - finalPrediction => float recordedOff;
 
 if(recordedOff > marginOfError){
 
-    <<<testnote, " Move mallet closer to surface">>>;
+    <<<testNote, " Move mallet closer to surface">>>;
 
 }
 
@@ -208,5 +257,4 @@ else{
 
     <<<"No adjustments needed">>>;
 }
-
 
