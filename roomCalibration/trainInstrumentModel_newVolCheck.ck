@@ -113,7 +113,7 @@ fun float measureAvgVolume(int note, int velocity, int repeats) {
     0.0 => float total;
     osc.init("192.168.0.15", 8001);
 
-    <<< "----- Measuring note", note, "velocity", velocity, "-----" >>>;
+    <<< "Measuring note", note, "velocity", velocity >>>;
 
     for (0 => int i; i < repeats; i++) {
         osc.send("/marimba", note, velocity);

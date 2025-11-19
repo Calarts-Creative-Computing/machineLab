@@ -36,7 +36,7 @@ fun void measureVolumes(int note, int baseVelocity, int repeats, float levels[],
     osc.init("localhost", 50000);
 
     // initialize OSC
-    <<< "----- Measuring note", note, "base velocity", baseVelocity, "-----" >>>;
+    <<< "Measuring note", note, "base velocity", baseVelocity >>>;
 
     // create volume measurement object
 
@@ -76,7 +76,7 @@ fun void measureVolumes(int note, int baseVelocity, int repeats, float levels[],
         1.5::second => now;
     }
 
-    // --- Optional exact base velocity tests ---
+    //Optional exact base velocity tests
     for (0 => int i; i < 3; i++) {
         int v;
         baseVelocity => v;

@@ -23,7 +23,7 @@ float avgLevels[marimbaNotes.size()][vel.size()]; //  now 2D array for note + ve
 fun float measureAvgVolume(int note, int velocity, int repeats) { // added velocity param
     0.0 => float total;
     osc.init("localhost", 50000);
-    <<< "----- Measuring note", note, "velocity", velocity, "-----" >>>;
+    <<< "Measuring note", note, "velocity", velocity >>>;
 
     for (0 => int i; i < repeats; i++) {
         osc.send("/marimba", note, velocity); // <-- use velocity

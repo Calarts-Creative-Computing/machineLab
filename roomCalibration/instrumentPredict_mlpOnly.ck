@@ -1,8 +1,4 @@
-// instrumentPredict_mlpOnly.ck
-// Predict RMS for a given note/velocity using pre-trained MLP
-// Includes live RMS measurement from VolumeCheck
 // Colton Arnold - Fall 2025
-
 
 // Explaining MLP training script:
 

@@ -21,7 +21,7 @@ float avgLevels[marimbaNotes.size()];
 fun float measureAvgVolume(int note, int repeats) {
     0.0 => float total;
     osc.init("localhost", 50000);
-    <<< "----- Measuring note", note, "-----" >>>;
+    <<< "Measuring note", note>>>;
 
     for (0 => int i; i < repeats; i++) {
         osc.send("/marimba", note, 127);

@@ -1,5 +1,4 @@
 // Created by Colton Arnold Fall 2025
-// Created by Colton Arnold Fall 2025
 @import "/Users/mtiid/git/machineLabCode/signalSendClasses/OSC/globalOSCSendClass.ck";
 
 oscSends osc;
@@ -16,24 +15,24 @@ oscSends osc;
 // store average levels
 float avgLevels[marimbaNotes.size()];
 
-// ----- FFT/RMS setup -----
+//FFT/RMS setup
 adc => Gain micGain => FFT fft =^ RMS rms => blackhole;
 
 // FFT parameters
 2048 => fft.size;
 Windowing.hann(2048) => fft.window;
 
-// ----- mic gain -----
+// mic gain
 100.0 => micGain.gain;  // increase if readings too small, decrease if clipping
 
-// ----- noise threshold -----
+//noise threshold
 0.008 => float threshold;  // RMS values below this are ignored
 
-// ----- measure RMS for a note -----
+//measure RMS for a note
 fun float measureAvgVolume(int note, int repeats) {
     0.0 => float total;
     osc.init("localhost", 50000);
-    <<< "----- Measuring note", note, "-----" >>>;
+    <<< "Measuring note", note >>>;
 
     for (0 => int i; i < repeats; i++) {
         osc.send("/marimba", note, 127);
