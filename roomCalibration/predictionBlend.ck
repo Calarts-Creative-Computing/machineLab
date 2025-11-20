@@ -197,9 +197,6 @@ fun float measureAvgVolume(int note, int velocity, int repeats) {
 // Compute sine-shaped alpha between dataset notes
 // Returns 0.0 if testNote matches a dataset note
 // Returns 1.0 halfway between two dataset notes
-//  Compute inverted sine-shaped alpha between dataset notes 
-// Returns 1.0 if testNote matches a dataset note
-// Returns 0.0 halfway between two dataset notes
 fun float getAlpha(int testNote, int datasetNotes[])
 {
     // if exactly in dataset → max closeness
